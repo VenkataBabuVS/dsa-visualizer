@@ -1,0 +1,3414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA · Foundations Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+            line-height: 1.6;
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app {
+            max-width: 1440px;
+            width: 100%;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .header-left h1 i {
+            background: linear-gradient(145deg, #2563eb, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.7rem;
+        }
+
+        .header-left .subhead {
+            font-size: 0.95rem;
+            color: #475569;
+            margin-top: 0.2rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .progress-badge {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ========== LAYOUT ========== */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.25rem 0.85rem;
+            box-shadow: 0 4px 20px -8px rgba(15, 23, 42, 0.1);
+            border: 1px solid #e9edf2;
+            position: sticky;
+            top: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            color: #64748b;
+            padding: 0 0.6rem 0.7rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .ds-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .ds-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: transparent;
+            border: none;
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0.85rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #334155;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .ds-btn i {
+            font-size: 1rem;
+            width: 1.4rem;
+            color: #64748b;
+            transition: color 0.15s;
+        }
+
+        .ds-btn:hover {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+
+        .ds-btn.active {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+            font-weight: 600;
+        }
+
+        .ds-btn.active i {
+            color: #2563eb;
+        }
+
+        .ds-btn.active::after {
+            content: '';
+            position: absolute;
+            right: 0.6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 18px;
+            background: #2563eb;
+            border-radius: 4px;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .concept-card {
+            background: white;
+            border-radius: 1.75rem;
+            padding: 1.75rem;
+            box-shadow: 0 4px 20px -8px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e9edf2;
+            transition: all 0.2s;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .concept-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .concept-title i {
+            color: #2563eb;
+            font-size: 1.4rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 50px;
+            padding: 0.25rem 0.85rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .concept-desc {
+            font-size: 0.98rem;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            background: #f8fafc;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            border-left: 4px solid #3b82f6;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .concept-desc i {
+            color: #3b82f6;
+            font-size: 1.1rem;
+            margin-top: 0.15rem;
+            flex-shrink: 0;
+        }
+
+        /* ========== VISUALIZATION ========== */
+        .canvas-wrapper {
+            background: #f8fafc;
+            border-radius: 1.25rem;
+            padding: 1.25rem 1rem;
+            border: 1px solid #e9edf2;
+            margin-bottom: 1.25rem;
+        }
+
+        .canvas-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .canvas-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .canvas-hint {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .canvas-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            min-height: 160px;
+            gap: 0.6rem;
+            padding: 0.5rem;
+            position: relative;
+        }
+
+        .block {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border: 2px solid #3b82f6;
+            border-radius: 0.9rem;
+            min-width: 72px;
+            height: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #1e40af;
+            box-shadow: 0 4px 0 #bfdbfe, 0 6px 12px -4px rgba(15, 23, 42, 0.12);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+            padding: 0.2rem;
+            position: relative;
+            font-size: 1rem;
+        }
+
+        .block .index-label {
+            font-size: 0.6rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 0.1rem;
+        }
+
+        .block.highlight {
+            border-color: #f59e0b;
+            background: #fffbeb;
+            transform: scale(1.08);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 4px 0 #d97706;
+        }
+
+        .block.algo-highlight {
+            border-color: #8b5cf6;
+            background: #f5f3ff;
+            transform: scale(1.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25), 0 4px 0 #7c3aed;
+        }
+
+        .node {
+            display: flex;
+            align-items: center;
+            gap: 0.15rem;
+        }
+
+        .node-block {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border: 2px solid #3b82f6;
+            border-radius: 0.9rem;
+            min-width: 64px;
+            height: 64px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #1e40af;
+            box-shadow: 0 4px 0 #bfdbfe, 0 6px 10px -4px rgba(15, 23, 42, 0.1);
+            padding: 0.2rem;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .node-block.highlight {
+            border-color: #f59e0b;
+            background: #fffbeb;
+            transform: scale(1.08);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 4px 0 #d97706;
+        }
+
+        .node-block.algo-highlight {
+            border-color: #8b5cf6;
+            background: #f5f3ff;
+            transform: scale(1.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25), 0 4px 0 #7c3aed;
+        }
+
+        .node-arrow {
+            font-size: 1.4rem;
+            color: #94a3b8;
+            font-weight: 300;
+            margin: 0 -0.15rem;
+        }
+
+        .node-arrow.double {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin: 0 0.05rem;
+        }
+
+        .node-sub {
+            font-size: 0.55rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-top: 0.1rem;
+        }
+
+        .circular-badge {
+            background: #eff6ff;
+            border-radius: 40px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            margin-left: 0.4rem;
+        }
+
+        .vertical-stack {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.35rem;
+            min-height: 160px;
+            padding: 0.5rem 1.5rem;
+            border-left: 3px dashed #cbd5e1;
+            border-right: 3px dashed #cbd5e1;
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .stack-block {
+            width: 100px;
+            height: 48px;
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border: 2px solid #3b82f6;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #1e40af;
+            box-shadow: 0 3px 0 #bfdbfe;
+            transition: all 0.25s;
+            font-size: 0.95rem;
+        }
+
+        .stack-block.top-highlight {
+            border-color: #f59e0b;
+            background: #fffbeb;
+            transform: translateX(5px);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 3px 0 #d97706;
+        }
+
+        .stack-block.algo-highlight {
+            border-color: #8b5cf6;
+            background: #f5f3ff;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25), 0 3px 0 #7c3aed;
+        }
+
+        .queue-horizontal {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 1rem 0.5rem;
+        }
+
+        .queue-block {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border: 2px solid #3b82f6;
+            border-radius: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #1e40af;
+            box-shadow: 0 4px 0 #bfdbfe;
+            transition: all 0.25s;
+            font-size: 0.95rem;
+        }
+
+        .queue-block.front-highlight {
+            border-color: #f59e0b;
+            background: #fffbeb;
+            transform: translateY(-4px);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 4px 0 #d97706;
+        }
+
+        .queue-block.algo-highlight {
+            border-color: #8b5cf6;
+            background: #f5f3ff;
+            transform: translateY(-4px);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25), 0 4px 0 #7c3aed;
+        }
+
+        /* ========== CONTROLS ========== */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1.25rem;
+            align-items: center;
+        }
+
+        .btn {
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #334155;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn i {
+            font-size: 0.85rem;
+        }
+
+        .btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+
+        .btn.primary {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+            box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn.primary:hover {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* ========== COLLAPSIBLE SECTIONS ========== */
+        .section {
+            margin-top: 1.5rem;
+            border-top: 1px solid #e9edf2;
+            padding-top: 1.25rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 0.5rem 0;
+            user-select: none;
+            border-radius: 0.5rem;
+            transition: background 0.15s;
+        }
+
+        .section-header:hover {
+            background: #f8fafc;
+        }
+
+        .section-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header h3 i {
+            color: #2563eb;
+            font-size: 0.95rem;
+        }
+
+        .section-toggle {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            transition: transform 0.2s;
+        }
+
+        .section-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .section-body {
+            padding: 0.75rem 0 0.25rem;
+            display: none;
+        }
+
+        .section-body.open {
+            display: block;
+        }
+
+        /* ========== INSIGHT GRID ========== */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .insight-item {
+            background: #f8fafc;
+            padding: 0.85rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid #e9edf2;
+        }
+
+        .insight-item .label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .insight-item .label i {
+            font-size: 0.7rem;
+            color: #3b82f6;
+        }
+
+        .insight-item .value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #0f172a;
+            line-height: 1.5;
+        }
+
+        /* ========== NOTES ========== */
+        .notes-content {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            border: 1px solid #e9edf2;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #1e293b;
+        }
+
+        .notes-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .notes-content p {
+            margin-bottom: 0.7rem;
+        }
+
+        .notes-content ul {
+            margin: 0.4rem 0 0.8rem 1.25rem;
+        }
+
+        .notes-content li {
+            margin-bottom: 0.4rem;
+        }
+
+        .notes-content li strong {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .notes-content code {
+            background: #e2e8f0;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .note-highlight {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 0.7rem 1rem;
+            border-radius: 0.6rem;
+            margin: 0.8rem 0;
+            font-size: 0.88rem;
+        }
+
+        .note-highlight strong {
+            color: #d97706;
+        }
+
+        /* ========== MEMORY MAP SECTION ========== */
+        .memory-map {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid #bae6fd;
+            margin-top: 0.5rem;
+        }
+
+        .memory-map h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .memory-map h4 i {
+            font-size: 1rem;
+        }
+
+        .memory-map .map-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 0.85rem;
+        }
+
+        .memory-map .map-card {
+            background: white;
+            border-radius: 0.85rem;
+            padding: 0.9rem 1rem;
+            border: 1px solid #bae6fd;
+            box-shadow: 0 2px 8px -4px rgba(3, 105, 161, 0.15);
+        }
+
+        .memory-map .map-card .map-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .memory-map .map-card .map-label i {
+            font-size: 0.7rem;
+        }
+
+        .memory-map .map-card .map-value {
+            font-size: 0.88rem;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .memory-map .map-value code {
+            background: #e0f2fe;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #0369a1;
+        }
+
+        .memory-map .derivation-box {
+            background: white;
+            border-radius: 0.85rem;
+            padding: 1rem 1.2rem;
+            border: 1px solid #bae6fd;
+            margin-top: 0.85rem;
+        }
+
+        .memory-map .derivation-box .step {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.7rem;
+            align-items: flex-start;
+        }
+
+        .memory-map .derivation-box .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .memory-map .derivation-box .step-num {
+            background: #0369a1;
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .memory-map .derivation-box .step-text {
+            font-size: 0.88rem;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .memory-map .derivation-box .step-text strong {
+            color: #0369a1;
+        }
+
+        .memory-map .pattern-tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 50px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin: 0.15rem;
+        }
+
+        /* ========== SCENARIOS ========== */
+        .scenario-tabs {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .scenario-tab {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 2rem;
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .scenario-tab i {
+            font-size: 0.75rem;
+        }
+
+        .scenario-tab:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .scenario-tab.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.4);
+        }
+
+        .scenario-panel {
+            background: #f8fafc;
+            border-radius: 1.25rem;
+            border: 1px solid #e9edf2;
+            padding: 1.25rem;
+        }
+
+        .scenario-panel h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .scenario-panel h4 i {
+            color: #2563eb;
+        }
+
+        .problem-statement {
+            background: #eff6ff;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid #3b82f6;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+
+        .approach-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .approach-card {
+            background: white;
+            border-radius: 0.9rem;
+            padding: 0.85rem 0.9rem;
+            border: 1.5px solid #e9edf2;
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .approach-card:hover {
+            border-color: #bfdbfe;
+            box-shadow: 0 4px 12px -6px rgba(37, 99, 235, 0.15);
+        }
+
+        .approach-card .approach-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .approach-card .approach-label.brute {
+            color: #dc2626;
+        }
+
+        .approach-card .approach-label.better {
+            color: #d97706;
+        }
+
+        .approach-card .approach-label.best {
+            color: #16a34a;
+        }
+
+        .approach-card .approach-time {
+            font-size: 0.72rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: #f8fafc;
+            border-radius: 0.4rem;
+            display: inline-block;
+        }
+
+        /* ---------- PSEUDOCODE WITH ANIMATION ---------- */
+        .pseudo-wrapper {
+            position: relative;
+            margin-top: 0.4rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        .pseudo-wrapper pre {
+            background: transparent;
+            color: #e2e8f0;
+            padding: 0.75rem 0.85rem;
+            font-size: 0.72rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+            transition: none;
+        }
+
+        .pseudo-wrapper pre .keyword {
+            color: #60a5fa;
+        }
+
+        .pseudo-wrapper pre .type {
+            color: #fbbf24;
+        }
+
+        .pseudo-wrapper pre .comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .pseudo-line {
+            display: block;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            transition: background 0.25s, color 0.25s, transform 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+        .pseudo-line.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-left-color: #8b5cf6;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .pseudo-line.executed {
+            background: rgba(16, 185, 129, 0.08);
+            border-left-color: #10b981;
+        }
+
+        .pseudo-line .line-num {
+            display: inline-block;
+            width: 1.6rem;
+            color: #64748b;
+            font-size: 0.65rem;
+            user-select: none;
+            text-align: right;
+            margin-right: 0.5rem;
+            font-weight: 400;
+        }
+
+        .pseudo-line.active .line-num {
+            color: #c4b5fd;
+        }
+
+        .anim-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .anim-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .anim-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .anim-btn.play {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+
+        .anim-btn.play:hover {
+            background: #1d4ed8;
+        }
+
+        .anim-btn.stop {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: white;
+        }
+
+        .anim-btn.stop:hover {
+            background: #b91c1c;
+        }
+
+        .anim-btn i {
+            font-size: 0.65rem;
+        }
+
+        .anim-status {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            margin-left: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .anim-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #64748b;
+            display: inline-block;
+        }
+
+        .anim-status .dot.running {
+            background: #8b5cf6;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 960px) {
+            .approach-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            body { padding: 1rem; }
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.4rem;
+                padding: 0.85rem;
+                border-radius: 1.25rem;
+            }
+            .sidebar-title {
+                width: 100%;
+                padding: 0 0 0.4rem;
+                margin-bottom: 0;
+                border-bottom: none;
+            }
+            .ds-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.3rem;
+                width: 100%;
+            }
+            .ds-btn {
+                width: auto;
+                padding: 0.45rem 0.75rem;
+                font-size: 0.8rem;
+                border-radius: 0.7rem;
+            }
+            .ds-btn.active::after {
+                display: none;
+            }
+            .ds-btn i {
+                font-size: 0.85rem;
+                width: 1rem;
+            }
+            .concept-card {
+                padding: 1.25rem;
+                border-radius: 1.25rem;
+            }
+            .concept-title { font-size: 1.3rem; }
+            .header-left h1 { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 0.6rem; }
+            .concept-card { padding: 1rem; }
+            .block { min-width: 58px; height: 58px; font-size: 0.85rem; }
+            .node-block { min-width: 54px; height: 54px; font-size: 0.8rem; }
+            .queue-block { width: 54px; height: 54px; font-size: 0.85rem; }
+            .stack-block { width: 85px; height: 42px; font-size: 0.85rem; }
+            .pseudo-wrapper pre { font-size: 0.68rem; padding: 0.6rem; }
+            .pseudo-line .line-num { width: 1.2rem; font-size: 0.6rem; }
+            .scenario-tab { font-size: 0.75rem; padding: 0.35rem 0.7rem; }
+            .scenario-tab i { font-size: 0.65rem; }
+            .memory-map { padding: 1rem; }
+            .memory-map .map-grid { grid-template-columns: 1fr; }
+        }
+
+        .dll-container, .circular-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.15rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <div class="header-left">
+                <h1><i class="fas fa-cubes"></i> DSA · Foundations</h1>
+                <div class="subhead">Visualize · Animate · Derive — build a mental memory map, not rote logic</div>
+            </div>
+            <div class="header-right">
+                <div class="progress-badge">
+                    <i class="fas fa-brain"></i>
+                    <span>Memory Map Method</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="sidebar">
+                <div class="sidebar-title">
+                    <i class="fas fa-compass"></i> Choose a Topic
+                </div>
+                <div class="ds-list" id="dsList">
+                    <button class="ds-btn active" data-ds="array"><i class="fas fa-th"></i> Array</button>
+                    <button class="ds-btn" data-ds="singly"><i class="fas fa-link"></i> Singly Linked List</button>
+                    <button class="ds-btn" data-ds="doubly"><i class="fas fa-arrows-alt-h"></i> Doubly Linked List</button>
+                    <button class="ds-btn" data-ds="circular"><i class="fas fa-sync-alt"></i> Circular Linked List</button>
+                    <button class="ds-btn" data-ds="stack"><i class="fas fa-layer-group"></i> Stack</button>
+                    <button class="ds-btn" data-ds="queue"><i class="fas fa-arrow-right"></i> Queue</button>
+                </div>
+            </div>
+
+            <div class="main">
+                <div class="concept-card" id="conceptCard"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ============================================================
+            // DATA (with memory map derivations)
+            // ============================================================
+            const DS = {
+                array: {
+                    title: 'Array',
+                    icon: 'fa-th',
+                    desc: 'An <strong>array</strong> is a contiguous block of memory storing elements of the same type. Access is O(1) by index. Insertion/deletion can be O(n) due to shifting. Perfect for static data and fast lookups.',
+                    animationType: 'array',
+                    initialState: [12, 24, 36, 48, 60],
+                    insight: {
+                        access: 'O(1) – direct index calculation',
+                        search: 'O(n) – linear scan',
+                        insert: 'O(n) – shifting required',
+                        delete: 'O(n) – shifting required',
+                        memory: 'Contiguous, fixed size',
+                        useCase: 'Databases, image processing, buffers'
+                    },
+                    memoryMap: {
+                        mentalModel: 'A row of numbered lockers side by side. Each locker has a number (index) and holds one value. You can instantly open locker #5 by walking straight to it — no need to open lockers 1–4 first.',
+                        keyInvariants: [
+                            'Elements are stored in <strong>contiguous memory</strong>',
+                            'Index <code>i</code> maps to address <code>base + i × size</code>',
+                            'Size is fixed at creation (unless dynamic array)',
+                            'All elements must be the same type'
+                        ],
+                        derivationSteps: [
+                            { step: 'Identify the pattern', text: 'Problem asks for a value based on <strong>position</strong> (i-th element)? → Array gives O(1) access.' },
+                            { step: 'Check the constraints', text: 'Need frequent insertions/deletions in the <strong>middle</strong>? Arrays shift O(n) — look for linked structures instead.' },
+                            { step: 'Look for value-pair patterns', text: 'Two-sum style problems → think <strong>hash map</strong> over array for O(n) solution.' },
+                            { step: 'Look for subarray patterns', text: 'Contiguous sum/max → think <strong>sliding window</strong> or <strong>Kadane\'s</strong> algorithm.' }
+                        ],
+                        triggers: ['Index-based access', 'Contiguous data', 'Fixed-size collection', 'Sliding window', 'Two pointers on sorted data', 'Binary search', 'Prefix sums']
+                    },
+                    notes: `
+                        <h4><i class="fas fa-lightbulb"></i> Array — Key Concepts</h4>
+                        <p><strong>Definition:</strong> A collection of elements stored in contiguous memory, indexed by position.</p>
+                        <ul>
+                            <li><strong>Random Access:</strong> O(1) via <code>base + i * size</code>.</li>
+                            <li><strong>Fixed Size:</strong> Traditional arrays cannot grow; use dynamic arrays for flexibility.</li>
+                            <li><strong>Cache Friendly:</strong> Excellent spatial locality for fast iteration.</li>
+                        </ul>
+                        <div class="note-highlight"><strong>💡 Pro Tip:</strong> Use dynamic arrays (ArrayList) for amortized O(1) append.</div>
+                        <p><strong>Pitfalls:</strong> Off-by-one errors, out-of-bounds, expensive middle insertions.</p>
+                    `,
+                    scenarios: [
+                        {
+                            title: 'Two Sum',
+                            icon: 'fa-search',
+                            problem: 'Find two numbers in an array that add up to a target.',
+                            brute: { label: 'Brute Force', time: 'O(n²) time, O(1) space',
+                                code: `FOR i FROM 0 TO n-1:
+    FOR j FROM i+1 TO n-1:
+        IF arr[i] + arr[j] == target:
+            RETURN [i, j]
+RETURN []`,
+                                lines: [
+                                    "FOR i FROM 0 TO n-1:",
+                                    "    FOR j FROM i+1 TO n-1:",
+                                    "        IF arr[i] + arr[j] == target:",
+                                    "            RETURN [i, j]",
+                                    "RETURN []"
+                                ],
+                                derivation: 'Naive: check every pair. No data structure used — pure brute force on the array.' },
+                            better: { label: 'Better (Sort+Two Pointers)', time: 'O(n log n) time, O(n) space',
+                                code: `pairs = [(arr[i], i)]
+SORT pairs BY value
+left=0; right=n-1
+WHILE left<right:
+    sum = pairs[left].v + pairs[right].v
+    IF sum == target: RETURN indices
+    ELSE IF sum < target: left++
+    ELSE: right--`,
+                                lines: [
+                                    "pairs = [(arr[i], i)]",
+                                    "SORT pairs BY value",
+                                    "left=0; right=n-1",
+                                    "WHILE left<right:",
+                                    "    sum = pairs[left].v + pairs[right].v",
+                                    "    IF sum == target: RETURN indices",
+                                    "    ELSE IF sum < target: left++",
+                                    "    ELSE: right--"
+                                ],
+                                derivation: 'Sorting enables two-pointer scan. Mental trigger: "sorted array + pair sum → two pointers".' },
+                            best: { label: 'Best (HashMap)', time: 'O(n) time, O(n) space',
+                                code: `map = {}
+FOR i FROM 0 TO n-1:
+    comp = target - arr[i]
+    IF map HAS comp: RETURN [map[comp], i]
+    map[arr[i]] = i`,
+                                lines: [
+                                    "map = {}",
+                                    "FOR i FROM 0 TO n-1:",
+                                    "    comp = target - arr[i]",
+                                    "    IF map HAS comp: RETURN [map[comp], i]",
+                                    "    map[arr[i]] = i"
+                                ],
+                                derivation: 'Trade space for time: store seen values in a hash map for O(1) lookup. Trigger: "pair sum → complement lookup".' }
+                        },
+                        {
+                            title: 'Max Subarray',
+                            icon: 'fa-chart-line',
+                            problem: 'Find the contiguous subarray with the largest sum.',
+                            brute: { label: 'Brute Force', time: 'O(n²) time, O(1) space',
+                                code: `maxSum = -∞
+FOR i FROM 0 TO n-1:
+    sum = 0
+    FOR j FROM i TO n-1:
+        sum += arr[j]
+        maxSum = MAX(maxSum, sum)
+RETURN maxSum`,
+                                lines: [
+                                    "maxSum = -∞",
+                                    "FOR i FROM 0 TO n-1:",
+                                    "    sum = 0",
+                                    "    FOR j FROM i TO n-1:",
+                                    "        sum += arr[j]",
+                                    "        maxSum = MAX(maxSum, sum)",
+                                    "RETURN maxSum"
+                                ],
+                                derivation: 'Check every starting point and extend. Recognizes contiguous subarray but no optimization.' },
+                            better: { label: 'Better (Divide & Conquer)', time: 'O(n log n) time, O(log n) space',
+                                code: `FUNCTION maxCross(arr,l,m,h):
+    leftSum = max sum from m to l
+    rightSum = max sum from m+1 to h
+    RETURN leftSum + rightSum
+
+FUNCTION solve(arr,l,h):
+    IF l==h: RETURN arr[l]
+    m = (l+h)/2
+    RETURN MAX(solve(l,m), solve(m+1,h), maxCross(l,m,h))`,
+                                lines: [
+                                    "FUNCTION maxCross(arr,l,m,h):",
+                                    "    leftSum = max sum from m to l",
+                                    "    rightSum = max sum from m+1 to h",
+                                    "    RETURN leftSum + rightSum",
+                                    "FUNCTION solve(arr,l,h):",
+                                    "    IF l==h: RETURN arr[l]",
+                                    "    m = (l+h)/2",
+                                    "    RETURN MAX(solve(l,m), solve(m+1,h), maxCross(l,m,h))"
+                                ],
+                                derivation: 'Divide array in half, solve each half, combine across midpoint. Trigger: "contiguous + divide" → consider D&C.' },
+                            best: { label: 'Best (Kadane)', time: 'O(n) time, O(1) space',
+                                code: `maxEnd = arr[0]
+maxSoFar = arr[0]
+FOR i FROM 1 TO n-1:
+    maxEnd = MAX(arr[i], maxEnd + arr[i])
+    maxSoFar = MAX(maxSoFar, maxEnd)
+RETURN maxSoFar`,
+                                lines: [
+                                    "maxEnd = arr[0]",
+                                    "maxSoFar = arr[0]",
+                                    "FOR i FROM 1 TO n-1:",
+                                    "    maxEnd = MAX(arr[i], maxEnd + arr[i])",
+                                    "    maxSoFar = MAX(maxSoFar, maxEnd)",
+                                    "RETURN maxSoFar"
+                                ],
+                                derivation: 'At each step, either extend the previous subarray or start fresh. Trigger: "max sum of contiguous subarray" → Kadane\'s.' }
+                        },
+                        {
+                            title: 'Rotate Array',
+                            icon: 'fa-sync-alt',
+                            problem: 'Rotate an array to the right by k steps.',
+                            brute: { label: 'Brute Force', time: 'O(n*k) time, O(1) space',
+                                code: `FOR i FROM 0 TO k-1:
+    last = arr[n-1]
+    FOR j FROM n-1 DOWNTO 1:
+        arr[j] = arr[j-1]
+    arr[0] = last`,
+                                lines: [
+                                    "FOR i FROM 0 TO k-1:",
+                                    "    last = arr[n-1]",
+                                    "    FOR j FROM n-1 DOWNTO 1:",
+                                    "        arr[j] = arr[j-1]",
+                                    "    arr[0] = last"
+                                ],
+                                derivation: 'Simulate rotation one step at a time. Works but slow for large k.' },
+                            better: { label: 'Better (Extra Array)', time: 'O(n) time, O(n) space',
+                                code: `temp = array of size n
+FOR i FROM 0 TO n-1:
+    temp[(i+k)%n] = arr[i]
+COPY temp TO arr`,
+                                lines: [
+                                    "temp = array of size n",
+                                    "FOR i FROM 0 TO n-1:",
+                                    "    temp[(i+k)%n] = arr[i]",
+                                    "COPY temp TO arr"
+                                ],
+                                derivation: 'Use modulo to compute final position. Trade O(n) space for O(n) time.' },
+                            best: { label: 'Best (Reversal)', time: 'O(n) time, O(1) space',
+                                code: `k = k % n
+reverse(arr, 0, n-1)
+reverse(arr, 0, k-1)
+reverse(arr, k, n-1)`,
+                                lines: [
+                                    "k = k % n",
+                                    "reverse(arr, 0, n-1)",
+                                    "reverse(arr, 0, k-1)",
+                                    "reverse(arr, k, n-1)"
+                                ],
+                                derivation: 'Three reversals = rotation. Trigger: "rotate array in-place with O(1) space" → reversal trick.' }
+                        },
+                        {
+                            title: 'Container With Most Water',
+                            icon: 'fa-water',
+                            problem: 'Find two lines that form a container holding the most water.',
+                            brute: { label: 'Brute Force', time: 'O(n²) time, O(1) space',
+                                code: `maxArea = 0
+FOR i FROM 0 TO n-1:
+    FOR j FROM i+1 TO n-1:
+        area = MIN(h[i], h[j]) * (j-i)
+        maxArea = MAX(maxArea, area)
+RETURN maxArea`,
+                                lines: [
+                                    "maxArea = 0",
+                                    "FOR i FROM 0 TO n-1:",
+                                    "    FOR j FROM i+1 TO n-1:",
+                                    "        area = MIN(h[i], h[j]) * (j-i)",
+                                    "        maxArea = MAX(maxArea, area)",
+                                    "RETURN maxArea"
+                                ],
+                                derivation: 'Check every pair of lines. O(n²) but correct.' },
+                            better: { label: 'Better (Sort+Two Pointers)', time: 'O(n log n)',
+                                code: `// Less optimal; use two-pointer instead`,
+                                lines: ["// Less optimal; use two-pointer instead"],
+                                derivation: 'Sorting does not help here because width matters. Skip this approach.' },
+                            best: { label: 'Best (Two Pointers)', time: 'O(n) time, O(1) space',
+                                code: `left=0; right=n-1; maxArea=0
+WHILE left<right:
+    area = MIN(h[left],h[right])*(right-left)
+    maxArea = MAX(maxArea, area)
+    IF h[left] < h[right]: left++
+    ELSE: right--
+RETURN maxArea`,
+                                lines: [
+                                    "left=0; right=n-1; maxArea=0",
+                                    "WHILE left<right:",
+                                    "    area = MIN(h[left],h[right])*(right-left)",
+                                    "    maxArea = MAX(maxArea, area)",
+                                    "    IF h[left] < h[right]: left++",
+                                    "    ELSE: right--",
+                                    "RETURN maxArea"
+                                ],
+                                derivation: 'Start wide and shrink the shorter side. Trigger: "max area between two lines" → two pointers moving inward.' }
+                        }
+                    ]
+                },
+                singly: {
+                    title: 'Singly Linked List',
+                    icon: 'fa-link',
+                    desc: 'A <strong>singly linked list</strong> consists of nodes where each node stores data and a reference to the next node. Traversal is one-way. Dynamic size, O(1) insert/delete at known positions, but O(n) access.',
+                    animationType: 'singly',
+                    initialState: [7, 14, 21, 28],
+                    insight: {
+                        access: 'O(n) – traverse from head',
+                        search: 'O(n) – linear',
+                        insert: 'O(1) if position known',
+                        delete: 'O(1) if position known',
+                        memory: 'Non-contiguous, dynamic',
+                        useCase: 'Stacks, queues, graphs'
+                    },
+                    memoryMap: {
+                        mentalModel: 'A treasure hunt where each clue (node) tells you where the next clue is. You can only start at the first clue (head) and follow the chain. To insert a new clue, you just rewrite one pointer.',
+                        keyInvariants: [
+                            'Each node has <code>data</code> and <code>next</code>',
+                            'Last node points to <code>null</code>',
+                            'You can only move <strong>forward</strong>',
+                            'Head is your only entry point (unless you keep tail)'
+                        ],
+                        derivationSteps: [
+                            { step: 'Detect the pattern', text: 'Problem needs <strong>dynamic size</strong> with O(1) insert/delete at a known node? → linked list.' },
+                            { step: 'Use two-pointer tricks', text: 'Cycle detection → <strong>Floyd\'s slow/fast</strong>. Middle node → slow/fast. N-th from end → two pointers offset by n.' },
+                            { step: 'Consider reversal', text: 'Need to process backward? → <strong>reverse the list</strong> or use recursion.' },
+                            { step: 'Dummy head trick', text: 'Edge cases at head become trivial with a <strong>dummy node</strong> pointing to head.' }
+                        ],
+                        triggers: ['Dynamic size', 'Forward-only traversal', 'Cycle detection', 'Reverse list', 'Merge sorted lists', 'Find middle', 'Detect loop', 'LRU cache (combined with hash map)']
+                    },
+                    notes: `
+                        <h4><i class="fas fa-lightbulb"></i> Singly Linked List — Key Concepts</h4>
+                        <ul>
+                            <li><strong>Node:</strong> { data, next }.</li>
+                            <li><strong>Head/Tail:</strong> First and last nodes; tail.next = null.</li>
+                            <li><strong>Insert Head:</strong> O(1). <strong>Insert Tail:</strong> O(n) without tail pointer.</li>
+                        </ul>
+                        <div class="note-highlight"><strong>💡 Pro Tip:</strong> Use a dummy head to simplify edge cases.</div>
+                    `,
+                    scenarios: [
+                        {
+                            title: 'Reverse List',
+                            icon: 'fa-undo-alt',
+                            problem: 'Reverse a singly linked list.',
+                            brute: { label: 'Brute (Stack)', time: 'O(n) time, O(n) space',
+                                code: `stack = []
+curr = head
+WHILE curr: stack.push(curr); curr=curr.next
+newHead = stack.pop()
+temp = newHead
+WHILE stack: temp.next=stack.pop(); temp=temp.next
+temp.next=NULL
+RETURN newHead`,
+                                lines: [
+                                    "stack = []",
+                                    "curr = head",
+                                    "WHILE curr: stack.push(curr); curr=curr.next",
+                                    "newHead = stack.pop()",
+                                    "temp = newHead",
+                                    "WHILE stack: temp.next=stack.pop(); temp=temp.next",
+                                    "temp.next=NULL",
+                                    "RETURN newHead"
+                                ],
+                                derivation: 'Use a stack to reverse order. Trigger: "reverse linked structure" → stack or recursion.' },
+                            better: { label: 'Better (Recursive)', time: 'O(n) time, O(n) stack space',
+                                code: `FUNCTION rev(head):
+    IF !head OR !head.next: RETURN head
+    newHead = rev(head.next)
+    head.next.next = head
+    head.next = NULL
+    RETURN newHead`,
+                                lines: [
+                                    "FUNCTION rev(head):",
+                                    "    IF !head OR !head.next: RETURN head",
+                                    "    newHead = rev(head.next)",
+                                    "    head.next.next = head",
+                                    "    head.next = NULL",
+                                    "    RETURN newHead"
+                                ],
+                                derivation: 'Recursion reverses from the tail back. Cleaner but uses call stack.' },
+                            best: { label: 'Best (Iterative)', time: 'O(n) time, O(1) space',
+                                code: `prev=NULL; curr=head
+WHILE curr:
+    next = curr.next
+    curr.next = prev
+    prev = curr
+    curr = next
+RETURN prev`,
+                                lines: [
+                                    "prev=NULL; curr=head",
+                                    "WHILE curr:",
+                                    "    next = curr.next",
+                                    "    curr.next = prev",
+                                    "    prev = curr",
+                                    "    curr = next",
+                                    "RETURN prev"
+                                ],
+                                derivation: 'Three pointers (prev, curr, next) reverse in place. Trigger: "reverse in O(1) space" → iterative pointer swap.' }
+                        },
+                        {
+                            title: 'Detect Cycle',
+                            icon: 'fa-sync-alt',
+                            problem: 'Detect if a linked list has a cycle.',
+                            brute: { label: 'Brute (HashSet)', time: 'O(n) time, O(n) space',
+                                code: `seen = SET()
+curr = head
+WHILE curr:
+    IF curr IN seen: RETURN curr
+    seen.add(curr)
+    curr = curr.next
+RETURN null`,
+                                lines: [
+                                    "seen = SET()",
+                                    "curr = head",
+                                    "WHILE curr:",
+                                    "    IF curr IN seen: RETURN curr",
+                                    "    seen.add(curr)",
+                                    "    curr = curr.next",
+                                    "RETURN null"
+                                ],
+                                derivation: 'Track visited nodes in a set. Simple but uses O(n) space.' },
+                            better: { label: 'Better (Mark)', time: 'O(n), O(1) destructive',
+                                code: `WHILE head:
+    IF head.visited: RETURN head
+    head.visited = true
+    head = head.next
+RETURN null`,
+                                lines: [
+                                    "WHILE head:",
+                                    "    IF head.visited: RETURN head",
+                                    "    head.visited = true",
+                                    "    head = head.next",
+                                    "RETURN null"
+                                ],
+                                derivation: 'Mark nodes as visited (modifies structure). O(1) space but destructive.' },
+                            best: { label: 'Best (Floyd\'s)', time: 'O(n) time, O(1) space',
+                                code: `slow=fast=head
+WHILE fast AND fast.next:
+    slow=slow.next; fast=fast.next.next
+    IF slow==fast:
+        slow=head
+        WHILE slow!=fast: slow=slow.next; fast=fast.next
+        RETURN slow
+RETURN null`,
+                                lines: [
+                                    "slow=fast=head",
+                                    "WHILE fast AND fast.next:",
+                                    "    slow=slow.next; fast=fast.next.next",
+                                    "    IF slow==fast:",
+                                    "        slow=head",
+                                    "        WHILE slow!=fast: slow=slow.next; fast=fast.next",
+                                    "        RETURN slow",
+                                    "RETURN null"
+                                ],
+                                derivation: 'Slow/fast pointers meet if there is a cycle. To find entry point, reset one pointer to head. Trigger: "detect cycle in O(1) space" → Floyd\'s.' }
+                        },
+                        {
+                            title: 'Merge Sorted Lists',
+                            icon: 'fa-code-branch',
+                            problem: 'Merge two sorted linked lists.',
+                            brute: { label: 'Brute (Array)', time: 'O(n+m) time, O(n+m) space',
+                                code: `vals=[]
+WHILE l1: vals.add(l1.val); l1=l1.next
+WHILE l2: vals.add(l2.val); l2=l2.next
+SORT vals
+dummy=new Node(0); curr=dummy
+FOR v IN vals: curr.next=new Node(v); curr=curr.next
+RETURN dummy.next`,
+                                lines: [
+                                    "vals=[]",
+                                    "WHILE l1: vals.add(l1.val); l1=l1.next",
+                                    "WHILE l2: vals.add(l2.val); l2=l2.next",
+                                    "SORT vals",
+                                    "dummy=new Node(0); curr=dummy",
+                                    "FOR v IN vals: curr.next=new Node(v); curr=curr.next",
+                                    "RETURN dummy.next"
+                                ],
+                                derivation: 'Collect, sort, rebuild. Works but ignores sorted property.' },
+                            better: { label: 'Better (Iterative)', time: 'O(n+m) time, O(1) space',
+                                code: `dummy=new Node(0); curr=dummy
+WHILE l1 AND l2:
+    IF l1.val <= l2.val: curr.next=l1; l1=l1.next
+    ELSE: curr.next=l2; l2=l2.next
+    curr=curr.next
+curr.next = l1 ? l1 : l2
+RETURN dummy.next`,
+                                lines: [
+                                    "dummy=new Node(0); curr=dummy",
+                                    "WHILE l1 AND l2:",
+                                    "    IF l1.val <= l2.val: curr.next=l1; l1=l1.next",
+                                    "    ELSE: curr.next=l2; l2=l2.next",
+                                    "    curr=curr.next",
+                                    "curr.next = l1 ? l1 : l2",
+                                    "RETURN dummy.next"
+                                ],
+                                derivation: 'Iterate with dummy head, pick smaller each time. Trigger: "merge sorted lists" → two pointers + dummy.' },
+                            best: { label: 'Best (Recursive)', time: 'O(n+m) time, O(n+m) stack',
+                                code: `FUNCTION merge(l1,l2):
+    IF !l1: RETURN l2
+    IF !l2: RETURN l1
+    IF l1.val <= l2.val:
+        l1.next = merge(l1.next, l2)
+        RETURN l1
+    ELSE:
+        l2.next = merge(l1, l2.next)
+        RETURN l2`,
+                                lines: [
+                                    "FUNCTION merge(l1,l2):",
+                                    "    IF !l1: RETURN l2",
+                                    "    IF !l2: RETURN l1",
+                                    "    IF l1.val <= l2.val:",
+                                    "        l1.next = merge(l1.next, l2)",
+                                    "        RETURN l1",
+                                    "    ELSE:",
+                                    "        l2.next = merge(l1, l2.next)",
+                                    "        RETURN l2"
+                                ],
+                                derivation: 'Recursive pick smaller, recurse on rest. Elegant but uses call stack.' }
+                        },
+                        {
+                            title: 'Find Middle',
+                            icon: 'fa-arrows-alt-h',
+                            problem: 'Find the middle node of a linked list.',
+                            brute: { label: 'Brute (Count)', time: 'O(n) time, O(1) space',
+                                code: `len=0; curr=head
+WHILE curr: len++; curr=curr.next
+curr=head
+FOR i=0 TO len/2-1: curr=curr.next
+RETURN curr`,
+                                lines: [
+                                    "len=0; curr=head",
+                                    "WHILE curr: len++; curr=curr.next",
+                                    "curr=head",
+                                    "FOR i=0 TO len/2-1: curr=curr.next",
+                                    "RETURN curr"
+                                ],
+                                derivation: 'Two passes: count then walk to middle. Works but O(2n).' },
+                            better: { label: 'Better (Array)', time: 'O(n) time, O(n) space',
+                                code: `nodes=[]
+WHILE head: nodes.add(head); head=head.next
+RETURN nodes[nodes.size/2]`,
+                                lines: [
+                                    "nodes=[]",
+                                    "WHILE head: nodes.add(head); head=head.next",
+                                    "RETURN nodes[nodes.size/2]"
+                                ],
+                                derivation: 'Store nodes in array, index middle. Uses O(n) space.' },
+                            best: { label: 'Best (Slow & Fast)', time: 'O(n) time, O(1) space',
+                                code: `slow=fast=head
+WHILE fast AND fast.next:
+    slow=slow.next; fast=fast.next.next
+RETURN slow`,
+                                lines: [
+                                    "slow=fast=head",
+                                    "WHILE fast AND fast.next:",
+                                    "    slow=slow.next; fast=fast.next.next",
+                                    "RETURN slow"
+                                ],
+                                derivation: 'Fast moves 2x, slow moves 1x. When fast hits end, slow is at middle. Trigger: "middle of list" → slow/fast pointers.' }
+                        }
+                    ]
+                },
+                doubly: {
+                    title: 'Doubly Linked List',
+                    icon: 'fa-arrows-alt-h',
+                    desc: 'A <strong>doubly linked list</strong> node contains data plus two references: <code>next</code> and <code>prev</code>. Allows bidirectional traversal. O(1) insert/delete given a node. More memory overhead but more flexible.',
+                    animationType: 'doubly',
+                    initialState: [10, 20, 30, 40],
+                    insight: {
+                        access: 'O(n) – from either end',
+                        search: 'O(n) – linear',
+                        insert: 'O(1) if position known',
+                        delete: 'O(1) if position known',
+                        memory: 'Two pointers per node',
+                        useCase: 'LRU cache, browser history'
+                    },
+                    memoryMap: {
+                        mentalModel: 'A two-way street where every building has doors on both sides. You can walk forward or backward. To remove a building, you just reconnect the street on both sides — O(1) if you\'re already there.',
+                        keyInvariants: [
+                            'Each node has <code>data</code>, <code>prev</code>, and <code>next</code>',
+                            'Head.prev = null; Tail.next = null',
+                            'Bidirectional traversal possible',
+                            'Deletion of a known node is O(1)'
+                        ],
+                        derivationSteps: [
+                            { step: 'Identify the need', text: 'Do you need to move <strong>backward</strong> or delete a node given only its reference? → doubly linked list.' },
+                            { step: 'Sentinel pattern', text: 'Use a <strong>circular doubly linked list with a sentinel</strong> to eliminate null checks entirely.' },
+                            { step: 'Combine with hash map', text: 'For O(1) lookup + O(1) reorder → <strong>hash map + doubly linked list</strong> (LRU cache pattern).' },
+                            { step: 'History pattern', text: 'Back/forward navigation → doubly linked list with a current pointer.' }
+                        ],
+                        triggers: ['Bidirectional traversal', 'LRU cache', 'Browser history', 'Undo/redo', 'Delete given node', 'Move to front/back', 'O(1) deletion']
+                    },
+                    notes: `
+                        <h4><i class="fas fa-lightbulb"></i> Doubly Linked List — Key Concepts</h4>
+                        <ul>
+                            <li><strong>Node:</strong> { data, prev, next }.</li>
+                            <li><strong>Bidirectional:</strong> Traverse forward and backward.</li>
+                            <li><strong>Deletion:</strong> O(1) given a node — update neighbors.</li>
+                        </ul>
+                        <div class="note-highlight"><strong>💡 Pro Tip:</strong> Use a circular doubly linked list with a sentinel to eliminate null checks.</div>
+                    `,
+                    scenarios: [
+                        {
+                            title: 'LRU Cache',
+                            icon: 'fa-database',
+                            problem: 'Design an LRU cache with O(1) get and put.',
+                            brute: { label: 'Brute (Array)', time: 'O(n) get, O(n) put',
+                                code: `CLASS LRU:
+    cache=[]
+    get(key): linear search, move to end
+    put(key,val): remove if exists, add to end, evict front`,
+                                lines: [
+                                    "CLASS LRU:",
+                                    "    cache=[]",
+                                    "    get(key): linear search, move to end",
+                                    "    put(key,val): remove if exists, add to end, evict front"
+                                ],
+                                derivation: 'Simple array with linear search. O(n) per operation.' },
+                            better: { label: 'Better (Map+List)', time: 'O(1) get, O(n) put',
+                                code: `map={}; order=[]
+get(key): if in map, move to front, return
+put(key,val): if exists remove, if full evict last, add front`,
+                                lines: [
+                                    "map={}; order=[]",
+                                    "get(key): if in map, move to front, return",
+                                    "put(key,val): if exists remove, if full evict last, add front"
+                                ],
+                                derivation: 'Hash map for lookup, array for order. Move-to-front is O(n) in array.' },
+                            best: { label: 'Best (Map+DLL)', time: 'O(1) get, O(1) put',
+                                code: `map={}; head, tail
+get(key): node=map[key]; remove(node); addFirst(node); return node.val
+put(key,val): if exists update+move; else create, addFirst, evict tail if full`,
+                                lines: [
+                                    "map={}; head, tail",
+                                    "get(key): node=map[key]; remove(node); addFirst(node); return node.val",
+                                    "put(key,val): if exists update+move; else create, addFirst, evict tail if full"
+                                ],
+                                derivation: 'Hash map gives O(1) lookup; doubly linked list gives O(1) reorder and evict. Trigger: "LRU cache" → map + DLL.' }
+                        },
+                        {
+                            title: 'Browser History',
+                            icon: 'fa-history',
+                            problem: 'Design browser history with visit, back, forward.',
+                            brute: { label: 'Brute (Array)', time: 'O(1) visit, O(n) back/fwd',
+                                code: `history=[]; curr=-1
+visit(url): truncate future, add, curr=end
+back(steps): curr=max(0,curr-steps); return history[curr]
+forward(steps): curr=min(end,curr+steps); return history[curr]`,
+                                lines: [
+                                    "history=[]; curr=-1",
+                                    "visit(url): truncate future, add, curr=end",
+                                    "back(steps): curr=max(0,curr-steps); return history[curr]",
+                                    "forward(steps): curr=min(end,curr+steps); return history[curr]"
+                                ],
+                                derivation: 'Array with index pointer. Back/forward is O(1) but visit truncation is O(n).' },
+                            better: { label: 'Better (Two Stacks)', time: 'O(1) amortized',
+                                code: `backStack=[]; fwdStack=[]; current=null
+visit(url): backStack.push(current); current=url; fwdStack.clear()
+back(steps): while steps-- and backStack: fwdStack.push(current); current=backStack.pop()
+forward(steps): while steps-- and fwdStack: backStack.push(current); current=fwdStack.pop()`,
+                                lines: [
+                                    "backStack=[]; fwdStack=[]; current=null",
+                                    "visit(url): backStack.push(current); current=url; fwdStack.clear()",
+                                    "back(steps): while steps-- and backStack: fwdStack.push(current); current=backStack.pop()",
+                                    "forward(steps): while steps-- and fwdStack: backStack.push(current); current=fwdStack.pop()"
+                                ],
+                                derivation: 'Two stacks model back/forward. Trigger: "back/forward navigation" → two stacks or DLL.' },
+                            best: { label: 'Best (Doubly LL)', time: 'O(1) all ops',
+                                code: `CLASS Page: url, prev, next
+CLASS Browser: current
+visit(url): newPage.prev=current; current.next=newPage; current=newPage
+back(steps): while steps-- and current.prev: current=current.prev
+forward(steps): while steps-- and current.next: current=current.next`,
+                                lines: [
+                                    "CLASS Page: url, prev, next",
+                                    "CLASS Browser: current",
+                                    "visit(url): newPage.prev=current; current.next=newPage; current=newPage",
+                                    "back(steps): while steps-- and current.prev: current=current.prev",
+                                    "forward(steps): while steps-- and current.next: current=current.next"
+                                ],
+                                derivation: 'Doubly linked list naturally supports back/forward. Each visit adds a new node.' }
+                        },
+                        {
+                            title: 'Flatten Multilevel',
+                            icon: 'fa-layer-group',
+                            problem: 'Flatten a multilevel doubly linked list.',
+                            brute: { label: 'Brute (Recursion+List)', time: 'O(n) time, O(n) space',
+                                code: `nodes=[]
+dfs(head): while head: nodes.add(head); if head.child: dfs(head.child); head=head.next
+flatten: link nodes sequentially, clear child`,
+                                lines: [
+                                    "nodes=[]",
+                                    "dfs(head): while head: nodes.add(head); if head.child: dfs(head.child); head=head.next",
+                                    "flatten: link nodes sequentially, clear child"
+                                ],
+                                derivation: 'DFS to collect all nodes, then relink. Simple but uses O(n) space.' },
+                            better: { label: 'Better (Stack)', time: 'O(n) time, O(n) space',
+                                code: `stack=[]; curr=head
+WHILE curr:
+    IF curr.child:
+        IF curr.next: stack.push(curr.next)
+        curr.next=curr.child; curr.child.prev=curr; curr.child=null
+    IF !curr.next AND stack: curr.next=stack.pop(); curr.next.prev=curr
+    curr=curr.next`,
+                                lines: [
+                                    "stack=[]; curr=head",
+                                    "WHILE curr:",
+                                    "    IF curr.child:",
+                                    "        IF curr.next: stack.push(curr.next)",
+                                    "        curr.next=curr.child; curr.child.prev=curr; curr.child=null",
+                                    "    IF !curr.next AND stack: curr.next=stack.pop(); curr.next.prev=curr",
+                                    "    curr=curr.next"
+                                ],
+                                derivation: 'Iterative with stack to remember next pointers. Trigger: "flatten nested structure" → stack or recursion.' },
+                            best: { label: 'Best (Recursive)', time: 'O(n) time, O(1) extra',
+                                code: `FUNCTION flatten(head):
+    curr=head
+    WHILE curr:
+        IF curr.child:
+            child=curr.child; next=curr.next
+            childTail=flatten(child)
+            curr.next=child; child.prev=curr; curr.child=null
+            IF next: childTail.next=next; next.prev=childTail
+        curr=curr.next
+    RETURN head`,
+                                lines: [
+                                    "FUNCTION flatten(head):",
+                                    "    curr=head",
+                                    "    WHILE curr:",
+                                    "        IF curr.child:",
+                                    "            child=curr.child; next=curr.next",
+                                    "            childTail=flatten(child)",
+                                    "            curr.next=child; child.prev=curr; curr.child=null",
+                                    "            IF next: childTail.next=next; next.prev=childTail",
+                                    "        curr=curr.next",
+                                    "    RETURN head"
+                                ],
+                                derivation: 'Recursively flatten child, then splice back. In-place with O(1) extra (excluding call stack).' }
+                        },
+                        {
+                            title: 'Reverse DLL',
+                            icon: 'fa-undo-alt',
+                            problem: 'Reverse a doubly linked list.',
+                            brute: { label: 'Brute (Stack)', time: 'O(n) time, O(n) space',
+                                code: `stack=[]
+WHILE head: stack.push(head); head=head.next
+newHead=stack.pop(); prev=null
+WHILE stack: node=stack.pop(); node.prev=prev; if prev: prev.next=node; prev=node
+RETURN newHead`,
+                                lines: [
+                                    "stack=[]",
+                                    "WHILE head: stack.push(head); head=head.next",
+                                    "newHead=stack.pop(); prev=null",
+                                    "WHILE stack: node=stack.pop(); node.prev=prev; if prev: prev.next=node; prev=node",
+                                    "RETURN newHead"
+                                ],
+                                derivation: 'Stack-based reversal. O(n) space.' },
+                            better: { label: 'Better (Swap Data)', time: 'O(n) time, O(1) space',
+                                code: `left=head; right=head
+WHILE right.next: right=right.next
+WHILE left!=right AND left.prev!=right:
+    SWAP left.val, right.val
+    left=left.next; right=right.prev
+RETURN head`,
+                                lines: [
+                                    "left=head; right=head",
+                                    "WHILE right.next: right=right.next",
+                                    "WHILE left!=right AND left.prev!=right:",
+                                    "    SWAP left.val, right.val",
+                                    "    left=left.next; right=right.prev",
+                                    "RETURN head"
+                                ],
+                                derivation: 'Swap values from both ends. Works but only swaps data, not nodes.' },
+                            best: { label: 'Best (Swap Pointers)', time: 'O(n) time, O(1) space',
+                                code: `curr=head; newHead=null
+WHILE curr:
+    temp=curr.next
+    curr.next=curr.prev
+    curr.prev=temp
+    newHead=curr
+    curr=temp
+RETURN newHead`,
+                                lines: [
+                                    "curr=head; newHead=null",
+                                    "WHILE curr:",
+                                    "    temp=curr.next",
+                                    "    curr.next=curr.prev",
+                                    "    curr.prev=temp",
+                                    "    newHead=curr",
+                                    "    curr=temp",
+                                    "RETURN newHead"
+                                ],
+                                derivation: 'Swap next/prev pointers for each node. The old tail becomes new head. Trigger: "reverse DLL in place" → pointer swap.' }
+                        }
+                    ]
+                },
+                circular: {
+                    title: 'Circular Linked List',
+                    icon: 'fa-sync-alt',
+                    desc: 'A <strong>circular linked list</strong> is a variation where the last node points back to the first node. Traversal can continue indefinitely. Useful for round-robin scheduling and buffers.',
+                    animationType: 'circular',
+                    initialState: [5, 15, 25, 35],
+                    insight: {
+                        access: 'O(n) – from any node',
+                        search: 'O(n) – linear',
+                        insert: 'O(1) if position known',
+                        delete: 'O(1) if position known',
+                        memory: 'Last points to first',
+                        useCase: 'Round-robin scheduling, buffers'
+                    },
+                    memoryMap: {
+                        mentalModel: 'A circular race track with no finish line. You can start at any point and keep going. The "last" element is simply the one whose next points back to the first.',
+                        keyInvariants: [
+                            'Last node\'s <code>next</code> points to head',
+                            'No null termination',
+                            'Traversal stops when you return to start',
+                            'Can maintain a <code>tail</code> pointer for O(1) access to both ends'
+                        ],
+                        derivationSteps: [
+                            { step: 'Identify cyclic behavior', text: 'Problem involves <strong>cycling through elements repeatedly</strong>? → circular linked list.' },
+                            { step: 'Use tail pointer trick', text: 'Maintain a <strong>tail</strong> instead of head. Then <code>tail.next</code> is head, and tail is last. Insert/delete at either end is O(1).' },
+                            { step: 'Count-based traversal', text: 'Always use a do-while (repeat-until) loop that stops when you return to the starting node.' },
+                            { step: 'Josephus-style patterns', text: 'Elimination games in a circle → circular list or recurrence formula.' }
+                        ],
+                        triggers: ['Round-robin scheduling', 'Circular buffer', 'Josephus problem', 'Token ring', 'Repeating playlist', 'Multiplayer turns', 'Cyclic dependency']
+                    },
+                    notes: `
+                        <h4><i class="fas fa-lightbulb"></i> Circular Linked List — Key Concepts</h4>
+                        <ul>
+                            <li><strong>No NULL Termination:</strong> Last node points back to head.</li>
+                            <li><strong>Any Node as Head:</strong> Conceptually a ring.</li>
+                            <li><strong>Traversal:</strong> Stop when you return to start.</li>
+                        </ul>
+                        <div class="note-highlight"><strong>💡 Pro Tip:</strong> Maintain a tail pointer for O(1) access to both ends.</div>
+                    `,
+                    scenarios: [
+                        {
+                            title: 'Josephus Problem',
+                            icon: 'fa-users',
+                            problem: 'N people in a circle, eliminate every k-th. Find survivor.',
+                            brute: { label: 'Brute (Array)', time: 'O(n²) time, O(n) space',
+                                code: `people=[1..n]; idx=0
+WHILE size>1:
+    idx=(idx+k-1)%size
+    people.remove(idx)
+RETURN people[0]`,
+                                lines: [
+                                    "people=[1..n]; idx=0",
+                                    "WHILE size>1:",
+                                    "    idx=(idx+k-1)%size",
+                                    "    people.remove(idx)",
+                                    "RETURN people[0]"
+                                ],
+                                derivation: 'Array with modulo, remove at index. Simple but O(n) removal.' },
+                            better: { label: 'Better (Queue)', time: 'O(n*k) time, O(n) space',
+                                code: `queue=[1..n]
+WHILE size>1:
+    FOR i=0 TO k-2: queue.enqueue(queue.dequeue())
+    queue.dequeue()
+RETURN queue.dequeue()`,
+                                lines: [
+                                    "queue=[1..n]",
+                                    "WHILE size>1:",
+                                    "    FOR i=0 TO k-2: queue.enqueue(queue.dequeue())",
+                                    "    queue.dequeue()",
+                                    "RETURN queue.dequeue()"
+                                ],
+                                derivation: 'Queue rotates k-1 times, then eliminates. Trigger: "circle elimination" → queue or circular list.' },
+                            best: { label: 'Best (Recurrence)', time: 'O(n) time, O(1) space',
+                                code: `survivor=0
+FOR i=2 TO n:
+    survivor = (survivor + k) % i
+RETURN survivor + 1`,
+                                lines: [
+                                    "survivor=0",
+                                    "FOR i=2 TO n:",
+                                    "    survivor = (survivor + k) % i",
+                                    "RETURN survivor + 1"
+                                ],
+                                derivation: 'Mathematical recurrence J(n,k) = (J(n-1,k) + k) % n. Trigger: "Josephus problem" → recurrence formula for O(n).' }
+                        },
+                        {
+                            title: 'Round Robin',
+                            icon: 'fa-clock',
+                            problem: 'Simulate round-robin CPU scheduling.',
+                            brute: { label: 'Brute (Array+Flag)', time: 'O(n * total_time)',
+                                code: `rem=burst.copy(); done=false
+WHILE !done:
+    done=true
+    FOR i=0 TO n-1:
+        IF rem[i]>0: done=false; t=MIN(rem[i],quantum); rem[i]-=t; print`,
+                                lines: [
+                                    "rem=burst.copy(); done=false",
+                                    "WHILE !done:",
+                                    "    done=true",
+                                    "    FOR i=0 TO n-1:",
+                                    "        IF rem[i]>0: done=false; t=MIN(rem[i],quantum); rem[i]-=t; print"
+                                ],
+                                derivation: 'Repeatedly scan array until all done. Works but inefficient.' },
+                            better: { label: 'Better (Queue)', time: 'O(n * total/quantum)',
+                                code: `queue=[0..n-1]; rem=burst.copy()
+WHILE queue:
+    i=queue.dequeue()
+    t=MIN(rem[i],quantum); rem[i]-=t
+    IF rem[i]>0: queue.enqueue(i)`,
+                                lines: [
+                                    "queue=[0..n-1]; rem=burst.copy()",
+                                    "WHILE queue:",
+                                    "    i=queue.dequeue()",
+                                    "    t=MIN(rem[i],quantum); rem[i]-=t",
+                                    "    IF rem[i]>0: queue.enqueue(i)"
+                                ],
+                                derivation: 'Queue naturally models round-robin. Each process runs quantum, re-enqueues if unfinished.' },
+                            best: { label: 'Best (Circular LL)', time: 'O(n * total/quantum)',
+                                code: `CLASS Process: id, remaining, next
+curr=head
+REPEAT:
+    t=MIN(curr.remaining,quantum); curr.remaining-=t
+    curr=curr.next
+UNTIL allDone`,
+                                lines: [
+                                    "CLASS Process: id, remaining, next",
+                                    "curr=head",
+                                    "REPEAT:",
+                                    "    t=MIN(curr.remaining,quantum); curr.remaining-=t",
+                                    "    curr=curr.next",
+                                    "UNTIL allDone"
+                                ],
+                                derivation: 'Circular linked list directly models the ring of processes. Trigger: "round-robin scheduling" → circular list.' }
+                        },
+                        {
+                            title: 'Split Circular List',
+                            icon: 'fa-code-branch',
+                            problem: 'Split a circular linked list into two halves.',
+                            brute: { label: 'Brute (Count)', time: 'O(n) time, O(1) space',
+                                code: `count=0; curr=head
+IF head: REPEAT: count++; curr=curr.next UNTIL curr==head
+half=count/2; h1=head; h2=head
+FOR i=0 TO half-1: h2=h2.next
+// find tails and break`,
+                                lines: [
+                                    "count=0; curr=head",
+                                    "IF head: REPEAT: count++; curr=curr.next UNTIL curr==head",
+                                    "half=count/2; h1=head; h2=head",
+                                    "FOR i=0 TO half-1: h2=h2.next",
+                                    "// find tails and break"
+                                ],
+                                derivation: 'Count nodes first, then split. Two passes.' },
+                            better: { label: 'Better (Slow & Fast)', time: 'O(n) time, O(1) space',
+                                code: `slow=fast=head
+WHILE fast.next!=head AND fast.next.next!=head:
+    slow=slow.next; fast=fast.next.next
+h1=head; h2=slow.next; slow.next=h1
+tail2=h2; WHILE tail2.next!=head: tail2=tail2.next
+tail2.next=h2`,
+                                lines: [
+                                    "slow=fast=head",
+                                    "WHILE fast.next!=head AND fast.next.next!=head:",
+                                    "    slow=slow.next; fast=fast.next.next",
+                                    "h1=head; h2=slow.next; slow.next=h1",
+                                    "tail2=h2; WHILE tail2.next!=head: tail2=tail2.next",
+                                    "tail2.next=h2"
+                                ],
+                                derivation: 'Slow/fast finds middle in one pass. Trigger: "split circular list" → slow/fast.' },
+                            best: { label: 'Best (Floyd\'s Split)', time: 'O(n) time, O(1) space',
+                                code: `slow=fast=head
+WHILE fast.next!=head AND fast.next.next!=head:
+    slow=slow.next; fast=fast.next.next
+h1=head; h2=slow.next; slow.next=h1
+tail2=h2; WHILE tail2.next!=head: tail2=tail2.next
+tail2.next=h2
+RETURN [h1, h2]`,
+                                lines: [
+                                    "slow=fast=head",
+                                    "WHILE fast.next!=head AND fast.next.next!=head:",
+                                    "    slow=slow.next; fast=fast.next.next",
+                                    "h1=head; h2=slow.next; slow.next=h1",
+                                    "tail2=h2; WHILE tail2.next!=head: tail2=tail2.next",
+                                    "tail2.next=h2",
+                                    "RETURN [h1, h2]"
+                                ],
+                                derivation: 'Optimized split with Floyd\'s. O(n) time, O(1) space.' }
+                        },
+                        {
+                            title: 'Insert Sorted',
+                            icon: 'fa-plus-circle',
+                            problem: 'Insert a value into a sorted circular linked list.',
+                            brute: { label: 'Brute (Linear)', time: 'O(n) time, O(1) space',
+                                code: `newNode=Node(val)
+IF !head: newNode.next=newNode; RETURN newNode
+curr=head
+WHILE curr.next!=head AND curr.next.val<val: curr=curr.next
+newNode.next=curr.next; curr.next=newNode
+RETURN head`,
+                                lines: [
+                                    "newNode=Node(val)",
+                                    "IF !head: newNode.next=newNode; RETURN newNode",
+                                    "curr=head",
+                                    "WHILE curr.next!=head AND curr.next.val<val: curr=curr.next",
+                                    "newNode.next=curr.next; curr.next=newNode",
+                                    "RETURN head"
+                                ],
+                                derivation: 'Find insertion point by scanning. Works but ignores head update when val < head.val.' },
+                            better: { label: 'Better (Edge Cases)', time: 'O(n) time, O(1) space',
+                                code: `newNode=Node(val)
+IF !head: newNode.next=newNode; RETURN newNode
+curr=head
+WHILE curr.next!=head AND curr.next.val<val: curr=curr.next
+newNode.next=curr.next; curr.next=newNode
+IF val<head.val: SWAP head.val,newNode.val
+RETURN head`,
+                                lines: [
+                                    "newNode=Node(val)",
+                                    "IF !head: newNode.next=newNode; RETURN newNode",
+                                    "curr=head",
+                                    "WHILE curr.next!=head AND curr.next.val<val: curr=curr.next",
+                                    "newNode.next=curr.next; curr.next=newNode",
+                                    "IF val<head.val: SWAP head.val,newNode.val",
+                                    "RETURN head"
+                                ],
+                                derivation: 'Handles head insertion by swapping values to keep head smallest.' },
+                            best: { label: 'Best (Tail Pointer)', time: 'O(n) time, O(1) space',
+                                code: `tail=head
+IF !tail: node=Node(val); node.next=node; RETURN node
+curr=tail
+WHILE curr.next!=tail AND curr.next.val<val: curr=curr.next
+newNode=Node(val); newNode.next=curr.next; curr.next=newNode
+IF val<tail.next.val: SWAP tail.next.val,newNode.val
+RETURN tail.next`,
+                                lines: [
+                                    "tail=head",
+                                    "IF !tail: node=Node(val); node.next=node; RETURN node",
+                                    "curr=tail",
+                                    "WHILE curr.next!=tail AND curr.next.val<val: curr=curr.next",
+                                    "newNode=Node(val); newNode.next=curr.next; curr.next=newNode",
+                                    "IF val<tail.next.val: SWAP tail.next.val,newNode.val",
+                                    "RETURN tail.next"
+                                ],
+                                derivation: 'Maintain tail pointer so both head and tail are O(1) accessible. Trigger: "sorted circular insert" → tail pointer.' }
+                        }
+                    ]
+                },
+                stack: {
+                    title: 'Stack',
+                    icon: 'fa-layer-group',
+                    desc: 'A <strong>stack</strong> is a LIFO (Last-In-First-Out) structure. Elements are pushed and popped from the top. Used in function calls, undo mechanisms, expression evaluation.',
+                    animationType: 'stack',
+                    initialState: [10, 20, 30],
+                    insight: {
+                        access: 'O(n) – only top accessible',
+                        search: 'O(n) – linear',
+                        insert: 'O(1) – push at top',
+                        delete: 'O(1) – pop from top',
+                        memory: 'Array or linked list based',
+                        useCase: 'Backtracking, parsers, DFS'
+                    },
+                    memoryMap: {
+                        mentalModel: 'A stack of plates. You can only add or remove from the top. The plate at the bottom is unreachable until you remove everything above it.',
+                        keyInvariants: [
+                            'LIFO: Last In, First Out',
+                            'Only the top element is accessible',
+                            'Push and pop are both O(1)',
+                            'Can be implemented with array or linked list'
+                        ],
+                        derivationSteps: [
+                            { step: 'Look for reversal patterns', text: 'Problem requires <strong>processing in reverse order</strong> or backtracking? → stack.' },
+                            { step: 'Nested structure detection', text: 'Balanced parentheses, nested expressions → stack naturally tracks open/close pairs.' },
+                            { step: 'Monotonic patterns', text: 'Next greater/smaller element → <strong>monotonic stack</strong> (increasing or decreasing).' },
+                            { step: 'Min/max tracking', text: 'Need O(1) min/max with push/pop? → <strong>two stacks</strong> or <strong>stack of pairs</strong>.' }
+                        ],
+                        triggers: ['LIFO order', 'Backtracking', 'Balanced parentheses', 'Next greater element', 'Expression evaluation', 'Undo/redo', 'DFS traversal', 'Function call stack']
+                    },
+                    notes: `
+                        <h4><i class="fas fa-lightbulb"></i> Stack — Key Concepts</h4>
+                        <ul>
+                            <li><strong>LIFO:</strong> Last in, first out.</li>
+                            <li><strong>Operations:</strong> push, pop, peek, isEmpty — all O(1).</li>
+                            <li><strong>Implementation:</strong> Array or linked list.</li>
+                        </ul>
+                        <div class="note-highlight"><strong>💡 Pro Tip:</strong> The call stack is a real-world stack. Deep recursion → stack overflow.</div>
+                    `,
+                    scenarios: [
+                        {
+                            title: 'Valid Parentheses',
+                            icon: 'fa-check-circle',
+                            problem: 'Check if brackets are properly balanced.',
+                            brute: { label: 'Brute (Replace)', time: 'O(n²) time, O(n) space',
+                                code: `WHILE s contains (), [], {}:
+    s = s.replace("()","").replace("[]","").replace("{}","")
+RETURN s.isEmpty()`,
+                                lines: [
+                                    "WHILE s contains (), [], {}:",
+                                    "    s = s.replace(\"()\",\"\").replace(\"[]\",\"\").replace(\"{}\",\"\")",
+                                    "RETURN s.isEmpty()"
+                                ],
+                                derivation: 'Repeatedly remove matched pairs. Works but O(n²).' },
+                            better: { label: 'Better (Count)', time: 'O(n) time, O(1) space',
+                                code: `count=0
+FOR c IN s:
+    IF c=='(': count++
+    ELSE IF c==')': count--
+    IF count<0: RETURN false
+RETURN count==0`,
+                                lines: [
+                                    "count=0",
+                                    "FOR c IN s:",
+                                    "    IF c=='(': count++",
+                                    "    ELSE IF c==')': count--",
+                                    "    IF count<0: RETURN false",
+                                    "RETURN count==0"
+                                ],
+                                derivation: 'Only works for single bracket type. Fails for mixed brackets.' },
+                            best: { label: 'Best (Stack)', time: 'O(n) time, O(n) space',
+                                code: `stack=[]; map={')':'(',']':'[','}':'{'}
+FOR c IN s:
+    IF c IN map.values(): stack.push(c)
+    ELSE IF c IN map.keys():
+        IF !stack OR stack.pop()!=map[c]: RETURN false
+RETURN stack.isEmpty()`,
+                                lines: [
+                                    "stack=[]; map={')':'(',']':'[','}':'{'}",
+                                    "FOR c IN s:",
+                                    "    IF c IN map.values(): stack.push(c)",
+                                    "    ELSE IF c IN map.keys():",
+                                    "        IF !stack OR stack.pop()!=map[c]: RETURN false",
+                                    "RETURN stack.isEmpty()"
+                                ],
+                                derivation: 'Stack tracks open brackets; closing bracket must match top. Trigger: "balanced brackets" → stack.' }
+                        },
+                        {
+                            title: 'Min Stack',
+                            icon: 'fa-database',
+                            problem: 'Design a stack with O(1) getMin.',
+                            brute: { label: 'Brute (Scan)', time: 'O(n) getMin',
+                                code: `stack=[]
+push(v): stack.add(v)
+pop(): stack.removeLast()
+top(): stack.last
+getMin(): min over all elements`,
+                                lines: [
+                                    "stack=[]",
+                                    "push(v): stack.add(v)",
+                                    "pop(): stack.removeLast()",
+                                    "top(): stack.last",
+                                    "getMin(): min over all elements"
+                                ],
+                                derivation: 'Simple stack, but getMin scans all elements O(n).' },
+                            better: { label: 'Better (Two Stacks)', time: 'O(1) all ops',
+                                code: `main=[]; min=[]
+push(v): main.push(v); if !min or v<=min.top: min.push(v)
+pop(): v=main.pop(); if v==min.top: min.pop()
+top(): main.top
+getMin(): min.top`,
+                                lines: [
+                                    "main=[]; min=[]",
+                                    "push(v): main.push(v); if !min or v<=min.top: min.push(v)",
+                                    "pop(): v=main.pop(); if v==min.top: min.pop()",
+                                    "top(): main.top",
+                                    "getMin(): min.top"
+                                ],
+                                derivation: 'Second stack tracks minimums. Trigger: "O(1) min in stack" → auxiliary stack.' },
+                            best: { label: 'Best (Pairs)', time: 'O(1) all ops',
+                                code: `stack=[]
+push(v): m = stack.isEmpty() ? v : MIN(v, stack.top.min)
+         stack.push({v, m})
+pop(): stack.pop()
+top(): stack.top.v
+getMin(): stack.top.m`,
+                                lines: [
+                                    "stack=[]",
+                                    "push(v): m = stack.isEmpty() ? v : MIN(v, stack.top.min)",
+                                    "         stack.push({v, m})",
+                                    "pop(): stack.pop()",
+                                    "top(): stack.top.v",
+                                    "getMin(): stack.top.m"
+                                ],
+                                derivation: 'Single stack storing (value, currentMin) pairs. More memory-efficient than two stacks.' }
+                        },
+                        {
+                            title: 'Daily Temperatures',
+                            icon: 'fa-temperature-high',
+                            problem: 'Days until a warmer temperature.',
+                            brute: { label: 'Brute Force', time: 'O(n²) time, O(n) space',
+                                code: `res=[0]*n
+FOR i=0 TO n-1:
+    FOR j=i+1 TO n-1:
+        IF T[j]>T[i]: res[i]=j-i; break
+RETURN res`,
+                                lines: [
+                                    "res=[0]*n",
+                                    "FOR i=0 TO n-1:",
+                                    "    FOR j=i+1 TO n-1:",
+                                    "        IF T[j]>T[i]: res[i]=j-i; break",
+                                    "RETURN res"
+                                ],
+                                derivation: 'Check every future day for warmer temperature. O(n²).' },
+                            better: { label: 'Better (Sorted Map)', time: 'O(n log n) time, O(n) space',
+                                code: `map=sorted map; res=[0]*n
+FOR i=n-1 DOWNTO 0:
+    entry=map.higherEntry(T[i])
+    res[i]= entry ? entry.value-i : 0
+    map[T[i]]=i`,
+                                lines: [
+                                    "map=sorted map; res=[0]*n",
+                                    "FOR i=n-1 DOWNTO 0:",
+                                    "    entry=map.higherEntry(T[i])",
+                                    "    res[i]= entry ? entry.value-i : 0",
+                                    "    map[T[i]]=i"
+                                ],
+                                derivation: 'Sorted map finds next greater efficiently. O(n log n).' },
+                            best: { label: 'Best (Monotonic Stack)', time: 'O(n) time, O(n) space',
+                                code: `res=[0]*n; stack=[]
+FOR i=0 TO n-1:
+    WHILE stack AND T[i]>T[stack.top]:
+        idx=stack.pop(); res[idx]=i-idx
+    stack.push(i)
+RETURN res`,
+                                lines: [
+                                    "res=[0]*n; stack=[]",
+                                    "FOR i=0 TO n-1:",
+                                    "    WHILE stack AND T[i]>T[stack.top]:",
+                                    "        idx=stack.pop(); res[idx]=i-idx",
+                                    "    stack.push(i)",
+                                    "RETURN res"
+                                ],
+                                derivation: 'Monotonic decreasing stack. Trigger: "next greater element" → monotonic stack.' }
+                        },
+                        {
+                            title: 'Evaluate RPN',
+                            icon: 'fa-calculator',
+                            problem: 'Evaluate Reverse Polish Notation.',
+                            brute: { label: 'Brute (Convert)', time: 'O(n²)',
+                                code: `// Convert to infix then evaluate (complex)`,
+                                lines: ["// Convert to infix then evaluate (complex)"],
+                                derivation: 'Converting to infix first is complex and unnecessary.' },
+                            better: { label: 'Better (Stack)', time: 'O(n) time, O(n) space',
+                                code: `stack=[]
+FOR token IN tokens:
+    IF operator:
+        b=stack.pop(); a=stack.pop()
+        stack.push(apply(a,b,token))
+    ELSE: stack.push(int(token))
+RETURN stack.pop()`,
+                                lines: [
+                                    "stack=[]",
+                                    "FOR token IN tokens:",
+                                    "    IF operator:",
+                                    "        b=stack.pop(); a=stack.pop()",
+                                    "        stack.push(apply(a,b,token))",
+                                    "    ELSE: stack.push(int(token))",
+                                    "RETURN stack.pop()"
+                                ],
+                                derivation: 'Stack naturally evaluates postfix. Push operands, pop two for operator.' },
+                            best: { label: 'Best (Optimized)', time: 'O(n) time, O(n) space',
+                                code: `deque=[]
+FOR token IN tokens:
+    SWITCH token:
+        '+': deque.push(deque.pop()+deque.pop())
+        '-': b=deque.pop(); a=deque.pop(); deque.push(a-b)
+        '*': deque.push(deque.pop()*deque.pop())
+        '/': b=deque.pop(); a=deque.pop(); deque.push(a/b)
+        default: deque.push(int(token))
+RETURN deque.pop()`,
+                                lines: [
+                                    "deque=[]",
+                                    "FOR token IN tokens:",
+                                    "    SWITCH token:",
+                                    "        '+': deque.push(deque.pop()+deque.pop())",
+                                    "        '-': b=deque.pop(); a=deque.pop(); deque.push(a-b)",
+                                    "        '*': deque.push(deque.pop()*deque.pop())",
+                                    "        '/': b=deque.pop(); a=deque.pop(); deque.push(a/b)",
+                                    "        default: deque.push(int(token))",
+                                    "RETURN deque.pop()"
+                                ],
+                                derivation: 'Use ArrayDeque for better performance than java.util.Stack.' }
+                        }
+                    ]
+                },
+                queue: {
+                    title: 'Queue',
+                    icon: 'fa-arrow-right',
+                    desc: 'A <strong>queue</strong> is a FIFO (First-In-First-Out) structure. Enqueue adds to the rear, dequeue removes from the front. Used in BFS, scheduling, buffering.',
+                    animationType: 'queue',
+                    initialState: [5, 10, 15, 20],
+                    insight: {
+                        access: 'O(n) – front/back only',
+                        search: 'O(n) – linear',
+                        insert: 'O(1) – enqueue at rear',
+                        delete: 'O(1) – dequeue from front',
+                        memory: 'Circular array or linked list',
+                        useCase: 'Task scheduling, BFS, messaging'
+                    },
+                    memoryMap: {
+                        mentalModel: 'A line at a ticket counter. The first person in line gets served first. New arrivals join the back. No cutting allowed.',
+                        keyInvariants: [
+                            'FIFO: First In, First Out',
+                            'Enqueue at rear, dequeue at front',
+                            'Both operations O(1)',
+                            'Can be circular to reuse array space'
+                        ],
+                        derivationSteps: [
+                            { step: 'Identify level-order patterns', text: 'Problem asks to process <strong>level by level</strong> or <strong>in waves</strong>? → queue.' },
+                            { step: 'Sliding window patterns', text: 'Max/min in sliding window → <strong>monotonic deque</strong> (double-ended queue).' },
+                            { step: 'BFS detection', text: 'Shortest path in unweighted graph, spreading fire/rot → <strong>multi-source BFS</strong> with queue.' },
+                            { step: 'Stack from queues', text: 'Can simulate stack with queues by rotating n-1 times on push or pop.' }
+                        ],
+                        triggers: ['FIFO order', 'BFS traversal', 'Level order', 'Sliding window max', 'Task scheduling', 'Rate limiting', 'Producer-consumer', 'Cache eviction (FIFO)']
+                    },
+                    notes: `
+                        <h4><i class="fas fa-lightbulb"></i> Queue — Key Concepts</h4>
+                        <ul>
+                            <li><strong>FIFO:</strong> First in, first out.</li>
+                            <li><strong>Two Ends:</strong> Front for removal, rear for insertion.</li>
+                            <li><strong>Variants:</strong> Circular, deque, priority queue.</li>
+                        </ul>
+                        <div class="note-highlight"><strong>💡 Pro Tip:</strong> Use a circular queue for efficient array-based implementation.</div>
+                    `,
+                    scenarios: [
+                        {
+                            title: 'Stack using Queues',
+                            icon: 'fa-layer-group',
+                            problem: 'Implement a LIFO stack using only FIFO queues.',
+                            brute: { label: 'Brute (Two Queues)', time: 'O(n) push, O(1) pop',
+                                code: `q1=[]; q2=[]
+push(x): q2.enqueue(x); while q1: q2.enqueue(q1.dequeue()); swap(q1,q2)
+pop(): q1.dequeue()
+top(): q1.peek()`,
+                                lines: [
+                                    "q1=[]; q2=[]",
+                                    "push(x): q2.enqueue(x); while q1: q2.enqueue(q1.dequeue()); swap(q1,q2)",
+                                    "pop(): q1.dequeue()",
+                                    "top(): q1.peek()"
+                                ],
+                                derivation: 'Use two queues; on push, move all to new queue. O(n) push.' },
+                            better: { label: 'Better (One Queue)', time: 'O(n) push, O(1) pop',
+                                code: `q=[]
+push(x): q.enqueue(x); FOR i=0 TO q.size-2: q.enqueue(q.dequeue())
+pop(): q.dequeue()
+top(): q.peek()`,
+                                lines: [
+                                    "q=[]",
+                                    "push(x): q.enqueue(x); FOR i=0 TO q.size-2: q.enqueue(q.dequeue())",
+                                    "pop(): q.dequeue()",
+                                    "top(): q.peek()"
+                                ],
+                                derivation: 'One queue, rotate n-1 times on push. Trigger: "stack from queue" → rotation.' },
+                            best: { label: 'Best (O(1) push)', time: 'O(1) push, O(n) pop',
+                                code: `q=[]
+push(x): q.enqueue(x)
+pop(): FOR i=0 TO q.size-2: q.enqueue(q.dequeue()); RETURN q.dequeue()
+top(): v=pop(); q.enqueue(v); RETURN v`,
+                                lines: [
+                                    "q=[]",
+                                    "push(x): q.enqueue(x)",
+                                    "pop(): FOR i=0 TO q.size-2: q.enqueue(q.dequeue()); RETURN q.dequeue()",
+                                    "top(): v=pop(); q.enqueue(v); RETURN v"
+                                ],
+                                derivation: 'Alternative: O(1) push, O(n) pop. Choose based on operation frequency.' }
+                        },
+                        {
+                            title: 'Sliding Window Max',
+                            icon: 'fa-chart-bar',
+                            problem: 'Max in each sliding window of size k.',
+                            brute: { label: 'Brute Force', time: 'O(n*k) time, O(1) space',
+                                code: `res=[]
+FOR i=0 TO n-k:
+    max=nums[i]
+    FOR j=i+1 TO i+k-1: max=MAX(max,nums[j])
+    res.append(max)`,
+                                lines: [
+                                    "res=[]",
+                                    "FOR i=0 TO n-k:",
+                                    "    max=nums[i]",
+                                    "    FOR j=i+1 TO i+k-1: max=MAX(max,nums[j])",
+                                    "    res.append(max)"
+                                ],
+                                derivation: 'Check every window. O(n*k).' },
+                            better: { label: 'Better (Heap)', time: 'O(n log k) time, O(k) space',
+                                code: `heap=[]; res=[]
+FOR i=0 TO n-1:
+    heap.insert({nums[i],i})
+    IF i>=k-1:
+        WHILE heap.peek.index<=i-k: heap.pop()
+        res.append(heap.peek.value)`,
+                                lines: [
+                                    "heap=[]; res=[]",
+                                    "FOR i=0 TO n-1:",
+                                    "    heap.insert({nums[i],i})",
+                                    "    IF i>=k-1:",
+                                    "        WHILE heap.peek.index<=i-k: heap.pop()",
+                                    "        res.append(heap.peek.value)"
+                                ],
+                                derivation: 'Max heap with lazy deletion. O(n log k).' },
+                            best: { label: 'Best (Monotonic Deque)', time: 'O(n) time, O(k) space',
+                                code: `deque=[]; res=[]
+FOR i=0 TO n-1:
+    WHILE deque AND deque.front<=i-k: deque.popFront()
+    WHILE deque AND nums[deque.back]<nums[i]: deque.popBack()
+    deque.pushBack(i)
+    IF i>=k-1: res.append(nums[deque.front])`,
+                                lines: [
+                                    "deque=[]; res=[]",
+                                    "FOR i=0 TO n-1:",
+                                    "    WHILE deque AND deque.front<=i-k: deque.popFront()",
+                                    "    WHILE deque AND nums[deque.back]<nums[i]: deque.popBack()",
+                                    "    deque.pushBack(i)",
+                                    "    IF i>=k-1: res.append(nums[deque.front])"
+                                ],
+                                derivation: 'Monotonic decreasing deque keeps max at front. Trigger: "sliding window max" → monotonic deque.' }
+                        },
+                        {
+                            title: 'BFS Level Order',
+                            icon: 'fa-sitemap',
+                            problem: 'Traverse binary tree level by level.',
+                            brute: { label: 'Brute (DFS+Levels)', time: 'O(n) time, O(n) space',
+                                code: `res=[]
+FUNCTION dfs(node, level):
+    IF !node: RETURN
+    IF res.size==level: res.add([])
+    res[level].add(node.val)
+    dfs(node.left, level+1); dfs(node.right, level+1)
+CALL dfs(root,0); RETURN res`,
+                                lines: [
+                                    "res=[]",
+                                    "FUNCTION dfs(node, level):",
+                                    "    IF !node: RETURN",
+                                    "    IF res.size==level: res.add([])",
+                                    "    res[level].add(node.val)",
+                                    "    dfs(node.left, level+1); dfs(node.right, level+1)",
+                                    "CALL dfs(root,0); RETURN res"
+                                ],
+                                derivation: 'DFS with level tracking. Works but not intuitive for level order.' },
+                            better: { label: 'Better (Two Queues)', time: 'O(n) time, O(n) space',
+                                code: `curr=[root] if root; res=[]
+WHILE curr:
+    level=[]; next=[]
+    FOR node IN curr:
+        level.add(node.val)
+        IF node.left: next.add(node.left)
+        IF node.right: next.add(node.right)
+    res.add(level); curr=next`,
+                                lines: [
+                                    "curr=[root] if root; res=[]",
+                                    "WHILE curr:",
+                                    "    level=[]; next=[]",
+                                    "    FOR node IN curr:",
+                                    "        level.add(node.val)",
+                                    "        IF node.left: next.add(node.left)",
+                                    "        IF node.right: next.add(node.right)",
+                                    "    res.add(level); curr=next"
+                                ],
+                                derivation: 'Two queues separate current and next level. Clean but uses two queues.' },
+                            best: { label: 'Best (One Queue)', time: 'O(n) time, O(n) space',
+                                code: `queue=[root] if root; res=[]
+WHILE queue:
+    size=queue.size; level=[]
+    FOR i=0 TO size-1:
+        node=queue.dequeue(); level.add(node.val)
+        IF node.left: queue.enqueue(node.left)
+        IF node.right: queue.enqueue(node.right)
+    res.add(level)
+RETURN res`,
+                                lines: [
+                                    "queue=[root] if root; res=[]",
+                                    "WHILE queue:",
+                                    "    size=queue.size; level=[]",
+                                    "    FOR i=0 TO size-1:",
+                                    "        node=queue.dequeue(); level.add(node.val)",
+                                    "        IF node.left: queue.enqueue(node.left)",
+                                    "        IF node.right: queue.enqueue(node.right)",
+                                    "    res.add(level)",
+                                    "RETURN res"
+                                ],
+                                derivation: 'One queue, track level size. Trigger: "level order traversal" → BFS with queue.' }
+                        },
+                        {
+                            title: 'Rotting Oranges',
+                            icon: 'fa-apple-alt',
+                            problem: 'Min time for all oranges to rot.',
+                            brute: { label: 'Brute (Simulation)', time: 'O((mn)²) time, O(mn) space',
+                                code: `minutes=0; changed=true
+WHILE changed:
+    changed=false
+    // check all cells, rot neighbors
+    minutes++
+RETURN hasFresh ? -1 : minutes`,
+                                lines: [
+                                    "minutes=0; changed=true",
+                                    "WHILE changed:",
+                                    "    changed=false",
+                                    "    // check all cells, rot neighbors",
+                                    "    minutes++",
+                                    "RETURN hasFresh ? -1 : minutes"
+                                ],
+                                derivation: 'Simulate minute by minute. O((mn)²) in worst case.' },
+                            better: { label: 'Better (BFS)', time: 'O(mn) time, O(mn) space',
+                                code: `queue=[]; fresh=0
+FOR i,j:
+    IF grid[i][j]==2: queue.enqueue({i,j})
+    ELSE IF grid[i][j]==1: fresh++
+IF fresh==0: RETURN 0
+min=-1; dirs=[...]
+WHILE queue:
+    size=queue.size; min++
+    FOR i=0 TO size-1:
+        cell=queue.dequeue()
+        FOR d IN dirs:
+            ni,nj = cell+d
+            IF valid AND grid[ni][nj]==1:
+                grid[ni][nj]=2; fresh--; queue.enqueue({ni,nj})
+RETURN fresh==0 ? min : -1`,
+                                lines: [
+                                    "queue=[]; fresh=0",
+                                    "FOR i,j:",
+                                    "    IF grid[i][j]==2: queue.enqueue({i,j})",
+                                    "    ELSE IF grid[i][j]==1: fresh++",
+                                    "IF fresh==0: RETURN 0",
+                                    "min=-1; dirs=[...]",
+                                    "WHILE queue:",
+                                    "    size=queue.size; min++",
+                                    "    FOR i=0 TO size-1:",
+                                    "        cell=queue.dequeue()",
+                                    "        FOR d IN dirs:",
+                                    "            ni,nj = cell+d",
+                                    "            IF valid AND grid[ni][nj]==1:",
+                                    "                grid[ni][nj]=2; fresh--; queue.enqueue({ni,nj})",
+                                    "RETURN fresh==0 ? min : -1"
+                                ],
+                                derivation: 'Multi-source BFS from all rotten oranges. Trigger: "spreading process" → BFS.' },
+                            best: { label: 'Best (Optimized BFS)', time: 'O(mn) time, O(mn) space',
+                                code: `queue=[]; fresh=0
+FOR i=0 TO m*n-1:
+    IF grid[i/n][i%n]==2: queue.enqueue(i)
+    ELSE IF grid[i/n][i%n]==1: fresh++
+IF fresh==0: RETURN 0
+min=0
+WHILE queue AND fresh>0:
+    size=queue.size
+    FOR i=0 TO size-1:
+        idx=queue.dequeue(); r=idx/n; c=idx%n
+        // check 4 neighbors
+    min++
+RETURN fresh==0 ? min : -1`,
+                                lines: [
+                                    "queue=[]; fresh=0",
+                                    "FOR i=0 TO m*n-1:",
+                                    "    IF grid[i/n][i%n]==2: queue.enqueue(i)",
+                                    "    ELSE IF grid[i/n][i%n]==1: fresh++",
+                                    "IF fresh==0: RETURN 0",
+                                    "min=0",
+                                    "WHILE queue AND fresh>0:",
+                                    "    size=queue.size",
+                                    "    FOR i=0 TO size-1:",
+                                    "        idx=queue.dequeue(); r=idx/n; c=idx%n",
+                                    "        // check 4 neighbors",
+                                    "    min++",
+                                    "RETURN fresh==0 ? min : -1"
+                                ],
+                                derivation: 'Use int encoding instead of objects. Early termination when no fresh remain.' }
+                        }
+                    ]
+                }
+            };
+
+            // ============================================================
+            // STATE
+            // ============================================================
+            let currentDS = 'array';
+            let currentScenario = 0;
+            let animationData = {
+                array: [...DS.array.initialState],
+                singly: [...DS.singly.initialState],
+                doubly: [...DS.doubly.initialState],
+                circular: [...DS.circular.initialState],
+                stack: [...DS.stack.initialState],
+                queue: [...DS.queue.initialState]
+            };
+            let highlightIndex = -1;
+            let highlightTop = false;
+            let highlightFront = false;
+            let animTimer = null;
+            let sectionsOpen = {
+                memorymap: true,
+                notes: false,
+                scenarios: true,
+                insights: true
+            };
+
+            let codeAnimTimer = null;
+            let codeAnimState = {
+                running: false,
+                lineIndex: 0,
+                totalLines: 0,
+                approachKey: null,
+                scenarioIndex: 0
+            };
+
+            const conceptCard = document.getElementById('conceptCard');
+            const dsButtons = document.querySelectorAll('.ds-btn');
+
+            // ============================================================
+            // HIGHLIGHT PSEUDOCODE
+            // ============================================================
+            function highlightPseudocode(code, approachKey, scenarioIndex) {
+                const lines = code.split('\n');
+                const scenario = DS[currentDS].scenarios[scenarioIndex];
+                const data = scenario[approachKey];
+                const pseudoLines = data.lines || lines;
+
+                let html = '';
+                for (let i = 0; i < pseudoLines.length; i++) {
+                    let line = pseudoLines[i]
+                        .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                        .replace(/(\/\/.*)/g, '<span class="comment">$1</span>')
+                        .replace(/\b(INT|FLOAT|BOOLEAN|CHAR|VOID|STRING|LIST|MAP|SET|QUEUE|STACK|NODE|TREENODE|LISTNODE)\b/g, '<span class="type">$1</span>')
+                        .replace(/\b(FUNCTION|RETURN|IF|ELSE|WHILE|FOR|DO|CLASS|PUBLIC|PRIVATE|STATIC|FINAL|NEW|SWAP|MAX|MIN|REPEAT|UNTIL|SWITCH|CASE|DEFAULT|BREAK|CONTINUE|FROM|TO|DOWNTO|AND|OR|NOT|IN|HAS|CONTAINS|SORT|BY)\b/g, '<span class="keyword">$1</span>');
+
+                    html += `<span class="pseudo-line" data-line="${i}">
+                        <span class="line-num">${i + 1}</span>${line}
+                    </span>`;
+                }
+                return html;
+            }
+
+            // ============================================================
+            // RENDER
+            // ============================================================
+            function renderConcept() {
+                const ds = DS[currentDS];
+                const data = animationData[currentDS];
+                const insight = ds.insight;
+
+                // ---------- VISUALIZATION ----------
+                let canvasHTML = '';
+
+                if (ds.animationType === 'array') {
+                    let blocks = data.map((val, idx) => {
+                        const hl = (highlightIndex === idx) ? 'highlight' : '';
+                        return `<div class="block ${hl}">
+                            ${val}
+                            <span class="index-label">[${idx}]</span>
+                        </div>`;
+                    }).join('');
+                    canvasHTML = `<div class="canvas-container">${blocks}</div>`;
+                } 
+                else if (ds.animationType === 'singly') {
+                    let nodes = data.map((val, idx) => {
+                        const hl = (highlightIndex === idx) ? 'highlight' : '';
+                        const arrow = idx < data.length - 1 ? '<span class="node-arrow">→</span>' : '<span style="font-size:0.8rem; color:#94a3b8; margin-left:0.2rem;">∅</span>';
+                        return `<div class="node">
+                            <div class="node-block ${hl}">${val}<span class="node-sub">next</span></div>
+                            ${arrow}
+                        </div>`;
+                    }).join('');
+                    canvasHTML = `<div class="canvas-container" style="gap:0.1rem;">${nodes}</div>`;
+                } 
+                else if (ds.animationType === 'doubly') {
+                    let nodes = data.map((val, idx) => {
+                        const hl = (highlightIndex === idx) ? 'highlight' : '';
+                        let leftArrow = idx > 0 ? '<span class="node-arrow double">⇄</span>' : '<span style="width:1.5rem; display:inline-block;"></span>';
+                        let rightArrow = idx < data.length - 1 ? '<span class="node-arrow double">⇄</span>' : '<span style="font-size:0.8rem; color:#94a3b8; margin-left:0.2rem;">∅</span>';
+                        return `<div class="node" style="gap:0;">
+                            ${leftArrow}
+                            <div class="node-block ${hl}"><span>${val}</span><span class="node-sub">prev·next</span></div>
+                            ${rightArrow}
+                        </div>`;
+                    }).join('');
+                    canvasHTML = `<div class="dll-container">${nodes}</div>`;
+                } 
+                else if (ds.animationType === 'circular') {
+                    let nodes = data.map((val, idx) => {
+                        const hl = (highlightIndex === idx) ? 'highlight' : '';
+                        let arrow = idx < data.length - 1 ? '<span class="node-arrow">→</span>' : '<span class="node-arrow" style="color:#2563eb;">↺</span>';
+                        return `<div class="node">
+                            <div class="node-block ${hl}">${val}<span class="node-sub">next</span></div>
+                            ${arrow}
+                        </div>`;
+                    }).join('');
+                    canvasHTML = `<div class="circular-container">
+                        ${nodes}
+                        <span class="circular-badge"><i class="fas fa-sync-alt"></i> last→first</span>
+                    </div>`;
+                }
+                else if (ds.animationType === 'stack') {
+                    let stackBlocks = [...data].reverse().map((val, revIdx) => {
+                        const origIdx = data.length - 1 - revIdx;
+                        const isTop = (origIdx === data.length - 1) && highlightTop;
+                        return `<div class="stack-block ${isTop ? 'top-highlight' : ''}">
+                            ${val}
+                            ${origIdx === data.length - 1 ? '<span style="font-size:0.55rem; margin-left:0.4rem; color:#64748b;">← top</span>' : ''}
+                        </div>`;
+                    }).join('');
+                    canvasHTML = `<div class="vertical-stack">${stackBlocks}</div>`;
+                } 
+                else if (ds.animationType === 'queue') {
+                    let queueBlocks = data.map((val, idx) => {
+                        const isFront = (idx === 0) && highlightFront;
+                        return `<div class="queue-block ${isFront ? 'front-highlight' : ''}">
+                            ${val}
+                            ${idx === 0 ? '<span style="font-size:0.55rem; margin-left:0.3rem; color:#64748b;">←front</span>' : ''}
+                            ${idx === data.length - 1 ? '<span style="font-size:0.55rem; margin-left:0.3rem; color:#64748b;">←rear</span>' : ''}
+                        </div>`;
+                    }).join('');
+                    canvasHTML = `<div class="queue-horizontal">${queueBlocks}</div>`;
+                }
+
+                // ---------- CONTROLS ----------
+                let controlsHTML = '';
+                if (currentDS === 'array' || currentDS === 'singly' || currentDS === 'doubly' || currentDS === 'circular') {
+                    controlsHTML = `
+                        <div class="btn-group">
+                            <button class="btn primary" id="btnTraverse"><i class="fas fa-play"></i> Traverse</button>
+                            <button class="btn" id="btnReset"><i class="fas fa-undo-alt"></i> Reset</button>
+                        </div>
+                    `;
+                } else if (currentDS === 'stack') {
+                    controlsHTML = `
+                        <div class="btn-group">
+                            <button class="btn primary" id="btnPush"><i class="fas fa-plus-circle"></i> Push</button>
+                            <button class="btn" id="btnPop"><i class="fas fa-minus-circle"></i> Pop</button>
+                            <button class="btn" id="btnPeek"><i class="fas fa-eye"></i> Peek</button>
+                            <button class="btn" id="btnReset"><i class="fas fa-undo-alt"></i> Reset</button>
+                        </div>
+                    `;
+                } else if (currentDS === 'queue') {
+                    controlsHTML = `
+                        <div class="btn-group">
+                            <button class="btn primary" id="btnEnqueue"><i class="fas fa-plus-circle"></i> Enqueue</button>
+                            <button class="btn" id="btnDequeue"><i class="fas fa-minus-circle"></i> Dequeue</button>
+                            <button class="btn" id="btnPeekFront"><i class="fas fa-eye"></i> Peek front</button>
+                            <button class="btn" id="btnReset"><i class="fas fa-undo-alt"></i> Reset</button>
+                        </div>
+                    `;
+                }
+
+                // ---------- INSIGHTS ----------
+                const insightHTML = `
+                    <div class="insight-grid">
+                        <div class="insight-item"><div class="label"><i class="fas fa-bolt"></i> Access</div><div class="value">${insight.access}</div></div>
+                        <div class="insight-item"><div class="label"><i class="fas fa-search"></i> Search</div><div class="value">${insight.search}</div></div>
+                        <div class="insight-item"><div class="label"><i class="fas fa-plus-circle"></i> Insert</div><div class="value">${insight.insert}</div></div>
+                        <div class="insight-item"><div class="label"><i class="fas fa-minus-circle"></i> Delete</div><div class="value">${insight.delete}</div></div>
+                        <div class="insight-item"><div class="label"><i class="fas fa-memory"></i> Memory</div><div class="value">${insight.memory}</div></div>
+                        <div class="insight-item"><div class="label"><i class="fas fa-briefcase"></i> Use case</div><div class="value">${insight.useCase}</div></div>
+                    </div>
+                `;
+
+                // ---------- MEMORY MAP ----------
+                const mm = ds.memoryMap;
+                let memoryMapHTML = '';
+                if (mm) {
+                    const invariantsHTML = mm.keyInvariants.map(inv => `<li>${inv}</li>`).join('');
+                    const stepsHTML = mm.derivationSteps.map((s, i) => `
+                        <div class="step">
+                            <div class="step-num">${i + 1}</div>
+                            <div class="step-text"><strong>${s.step}:</strong> ${s.text}</div>
+                        </div>
+                    `).join('');
+                    const triggersHTML = mm.triggers.map(t => `<span class="pattern-tag">${t}</span>`).join('');
+
+                    memoryMapHTML = `
+                        <div class="memory-map">
+                            <h4><i class="fas fa-brain"></i> Memory Map — How to Derive, Not Memorize</h4>
+                            <div class="map-grid">
+                                <div class="map-card">
+                                    <div class="map-label"><i class="fas fa-lightbulb"></i> Mental Model</div>
+                                    <div class="map-value">${mm.mentalModel}</div>
+                                </div>
+                                <div class="map-card">
+                                    <div class="map-label"><i class="fas fa-lock"></i> Key Invariants</div>
+                                    <ul style="margin:0.3rem 0 0 1rem; font-size:0.86rem; color:#0f172a; line-height:1.7;">${invariantsHTML}</ul>
+                                </div>
+                                <div class="map-card">
+                                    <div class="map-label"><i class="fas fa-tags"></i> Pattern Triggers</div>
+                                    <div style="margin-top:0.3rem;">${triggersHTML}</div>
+                                </div>
+                            </div>
+                            <div class="derivation-box">
+                                <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; color:#0369a1; margin-bottom:0.6rem;">
+                                    <i class="fas fa-route" style="margin-right:0.3rem;"></i> Derivation Path — How to Think About Any Problem
+                                </div>
+                                ${stepsHTML}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // ---------- NOTES ----------
+                const notesHTML = `<div class="notes-content">${ds.notes}</div>`;
+
+                // ---------- SCENARIOS ----------
+                let scenariosHTML = '';
+                if (ds.scenarios && ds.scenarios.length > 0) {
+                    const scenarios = ds.scenarios;
+                    const activeScenario = scenarios[currentScenario] || scenarios[0];
+
+                    let tabsHTML = scenarios.map((s, i) => {
+                        const active = i === currentScenario ? 'active' : '';
+                        return `<button class="scenario-tab ${active}" data-scenario="${i}">
+                            <i class="fas ${s.icon}"></i> ${s.title}
+                        </button>`;
+                    }).join('');
+
+                    const approaches = [
+                        { key: 'brute', label: 'Brute Force', icon: 'fa-times-circle', cls: 'brute' },
+                        { key: 'better', label: 'Better', icon: 'fa-chart-line', cls: 'better' },
+                        { key: 'best', label: 'Optimal', icon: 'fa-trophy', cls: 'best' }
+                    ];
+
+                    let approachesHTML = approaches.map(a => {
+                        const data = activeScenario[a.key];
+                        if (!data) return '';
+                        const pseudoHTML = highlightPseudocode(data.code, a.key, currentScenario);
+                        const derivationHTML = data.derivation ? `<div style="background:#f0f9ff; border-left:3px solid #38bdf8; padding:0.5rem 0.7rem; border-radius:0.5rem; margin-top:0.5rem; font-size:0.75rem; color:#0369a1; line-height:1.5;"><i class="fas fa-lightbulb" style="margin-right:0.3rem;"></i>${data.derivation}</div>` : '';
+
+                        return `<div class="approach-card" data-approach="${a.key}">
+                            <div class="approach-label ${a.cls}"><i class="fas ${a.icon}"></i> ${data.label}</div>
+                            <div class="approach-time"><i class="fas fa-clock" style="margin-right:0.25rem;"></i>${data.time}</div>
+                            <div class="pseudo-wrapper">
+                                <pre id="pseudo-${a.key}">${pseudoHTML}</pre>
+                                <div class="anim-controls">
+                                    <button class="anim-btn play" data-anim-approach="${a.key}" data-scenario="${currentScenario}">
+                                        <i class="fas fa-play"></i> Animate
+                                    </button>
+                                    <button class="anim-btn stop" data-anim-stop="${a.key}" style="display:none;">
+                                        <i class="fas fa-stop"></i> Stop
+                                    </button>
+                                    <span class="anim-status" id="status-${a.key}">
+                                        <span class="dot"></span> Ready
+                                    </span>
+                                </div>
+                            </div>
+                            ${derivationHTML}
+                        </div>`;
+                    }).join('');
+
+                    scenariosHTML = `
+                        <div class="scenario-tabs">${tabsHTML}</div>
+                        <div class="scenario-panel">
+                            <h4><i class="fas ${activeScenario.icon}"></i> ${activeScenario.title}</h4>
+                            <div class="problem-statement">${activeScenario.problem}</div>
+                            <div class="approach-grid">${approachesHTML}</div>
+                        </div>
+                    `;
+                }
+
+                // ---------- ASSEMBLE ----------
+                conceptCard.innerHTML = `
+                    <div class="title-row">
+                        <div class="concept-title">
+                            <i class="fas ${ds.icon}"></i> ${ds.title}
+                            <span class="badge">FUNDAMENTAL</span>
+                        </div>
+                    </div>
+
+                    <div class="concept-desc">
+                        <i class="fas fa-info-circle"></i>
+                        <div>${ds.desc}</div>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <div class="canvas-header">
+                            <div class="canvas-label"><i class="fas fa-eye"></i> Live Visualization</div>
+                            <div class="canvas-hint"><i class="fas fa-hand-pointer"></i> Use the buttons below to interact</div>
+                        </div>
+                        ${canvasHTML}
+                    </div>
+
+                    <div class="controls">${controlsHTML}</div>
+
+                    <!-- Memory Map (first — the most important) -->
+                    <div class="section">
+                        <div class="section-header" data-section="memorymap">
+                            <h3><i class="fas fa-brain"></i> Memory Map — Derive Any Solution</h3>
+                            <i class="fas fa-chevron-down section-toggle ${sectionsOpen.memorymap ? 'open' : ''}"></i>
+                        </div>
+                        <div class="section-body ${sectionsOpen.memorymap ? 'open' : ''}" id="section-memorymap">
+                            ${memoryMapHTML}
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header" data-section="scenarios">
+                            <h3><i class="fas fa-tasks"></i> Scenarios & Animated Pseudocode</h3>
+                            <i class="fas fa-chevron-down section-toggle ${sectionsOpen.scenarios ? 'open' : ''}"></i>
+                        </div>
+                        <div class="section-body ${sectionsOpen.scenarios ? 'open' : ''}" id="section-scenarios">
+                            ${scenariosHTML}
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header" data-section="insights">
+                            <h3><i class="fas fa-microscope"></i> Complexity Insights</h3>
+                            <i class="fas fa-chevron-down section-toggle ${sectionsOpen.insights ? 'open' : ''}"></i>
+                        </div>
+                        <div class="section-body ${sectionsOpen.insights ? 'open' : ''}" id="section-insights">
+                            ${insightHTML}
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header" data-section="notes">
+                            <h3><i class="fas fa-book-open"></i> In-Depth Notes</h3>
+                            <i class="fas fa-chevron-down section-toggle ${sectionsOpen.notes ? 'open' : ''}"></i>
+                        </div>
+                        <div class="section-body ${sectionsOpen.notes ? 'open' : ''}" id="section-notes">
+                            ${notesHTML}
+                        </div>
+                    </div>
+                `;
+
+                attachControlListeners();
+                attachScenarioListeners();
+                attachSectionListeners();
+                attachAnimationListeners();
+            }
+
+            // ============================================================
+            // LISTENERS
+            // ============================================================
+            function attachControlListeners() {
+                const btnTraverse = document.getElementById('btnTraverse');
+                if (btnTraverse) btnTraverse.addEventListener('click', traverseDS);
+                const btnReset = document.getElementById('btnReset');
+                if (btnReset) btnReset.addEventListener('click', resetDS);
+                const btnPush = document.getElementById('btnPush');
+                if (btnPush) btnPush.addEventListener('click', pushStack);
+                const btnPop = document.getElementById('btnPop');
+                if (btnPop) btnPop.addEventListener('click', popStack);
+                const btnPeek = document.getElementById('btnPeek');
+                if (btnPeek) btnPeek.addEventListener('click', peekStack);
+                const btnEnqueue = document.getElementById('btnEnqueue');
+                if (btnEnqueue) btnEnqueue.addEventListener('click', enqueueQueue);
+                const btnDequeue = document.getElementById('btnDequeue');
+                if (btnDequeue) btnDequeue.addEventListener('click', dequeueQueue);
+                const btnPeekFront = document.getElementById('btnPeekFront');
+                if (btnPeekFront) btnPeekFront.addEventListener('click', peekQueue);
+            }
+
+            function attachScenarioListeners() {
+                document.querySelectorAll('.scenario-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        stopCodeAnimation();
+                        currentScenario = parseInt(e.currentTarget.dataset.scenario);
+                        renderConcept();
+                    });
+                });
+            }
+
+            function attachSectionListeners() {
+                document.querySelectorAll('.section-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const section = header.dataset.section;
+                        sectionsOpen[section] = !sectionsOpen[section];
+                        const body = document.getElementById('section-' + section);
+                        const toggle = header.querySelector('.section-toggle');
+                        if (sectionsOpen[section]) {
+                            body.classList.add('open');
+                            toggle.classList.add('open');
+                        } else {
+                            body.classList.remove('open');
+                            toggle.classList.remove('open');
+                        }
+                    });
+                });
+            }
+
+            function attachAnimationListeners() {
+                document.querySelectorAll('.anim-btn.play').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const approachKey = e.currentTarget.dataset.animApproach;
+                        const scenarioIdx = parseInt(e.currentTarget.dataset.scenario);
+                        startCodeAnimation(approachKey, scenarioIdx);
+                    });
+                });
+
+                document.querySelectorAll('.anim-btn.stop').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        stopCodeAnimation();
+                    });
+                });
+            }
+
+            // ============================================================
+            // CODE ANIMATION
+            // ============================================================
+            function startCodeAnimation(approachKey, scenarioIdx) {
+                stopCodeAnimation();
+
+                const ds = DS[currentDS];
+                const scenario = ds.scenarios[scenarioIdx];
+                const data = scenario[approachKey];
+                if (!data || !data.lines) return;
+
+                const lines = data.lines;
+                const total = lines.length;
+
+                codeAnimState = {
+                    running: true,
+                    lineIndex: 0,
+                    totalLines: total,
+                    approachKey: approachKey,
+                    scenarioIndex: scenarioIdx
+                };
+
+                const container = document.getElementById('pseudo-' + approachKey);
+                if (!container) return;
+                container.querySelectorAll('.pseudo-line').forEach(el => {
+                    el.classList.remove('active', 'executed');
+                });
+
+                const playBtn = document.querySelector(`.anim-btn.play[data-anim-approach="${approachKey}"]`);
+                const stopBtn = document.querySelector(`.anim-btn.stop[data-anim-stop="${approachKey}"]`);
+                if (playBtn) playBtn.style.display = 'none';
+                if (stopBtn) stopBtn.style.display = 'inline-flex';
+
+                const statusEl = document.getElementById('status-' + approachKey);
+                if (statusEl) {
+                    statusEl.innerHTML = '<span class="dot running"></span> Running...';
+                }
+
+                codeAnimTimer = setInterval(() => {
+                    stepCodeAnimation(approachKey);
+                }, 900);
+            }
+
+            function stepCodeAnimation(approachKey) {
+                if (!codeAnimState.running) return;
+
+                const container = document.getElementById('pseudo-' + approachKey);
+                if (!container) {
+                    stopCodeAnimation();
+                    return;
+                }
+
+                const lines = container.querySelectorAll('.pseudo-line');
+                const current = codeAnimState.lineIndex;
+
+                if (current >= codeAnimState.totalLines) {
+                    stopCodeAnimation(true);
+                    return;
+                }
+
+                lines.forEach((el, i) => {
+                    el.classList.remove('active');
+                    if (i < current) {
+                        el.classList.add('executed');
+                    }
+                });
+
+                if (lines[current]) {
+                    lines[current].classList.add('active');
+                    lines[current].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+
+                codeAnimState.lineIndex++;
+            }
+
+            function stopCodeAnimation(complete = false) {
+                codeAnimState.running = false;
+                if (codeAnimTimer) {
+                    clearInterval(codeAnimTimer);
+                    codeAnimTimer = null;
+                }
+
+                const approachKey = codeAnimState.approachKey;
+                if (approachKey) {
+                    const playBtn = document.querySelector(`.anim-btn.play[data-anim-approach="${approachKey}"]`);
+                    const stopBtn = document.querySelector(`.anim-btn.stop[data-anim-stop="${approachKey}"]`);
+                    if (playBtn) playBtn.style.display = 'inline-flex';
+                    if (stopBtn) stopBtn.style.display = 'none';
+
+                    const statusEl = document.getElementById('status-' + approachKey);
+                    if (statusEl) {
+                        if (complete) {
+                            statusEl.innerHTML = '<span class="dot" style="background:#10b981;"></span> Complete';
+                        } else {
+                            statusEl.innerHTML = '<span class="dot"></span> Ready';
+                        }
+                    }
+
+                    if (!complete) {
+                        const container = document.getElementById('pseudo-' + approachKey);
+                        if (container) {
+                            container.querySelectorAll('.pseudo-line').forEach(el => {
+                                el.classList.remove('active');
+                            });
+                        }
+                    }
+                }
+
+                codeAnimState.lineIndex = 0;
+            }
+
+            // ============================================================
+            // VISUAL ANIMATION
+            // ============================================================
+            function resetHighlights() {
+                highlightIndex = -1;
+                highlightTop = false;
+                highlightFront = false;
+            }
+
+            function stopAnimation() {
+                if (animTimer) {
+                    clearTimeout(animTimer);
+                    animTimer = null;
+                }
+            }
+
+            function resetDS() {
+                stopAnimation();
+                resetHighlights();
+                animationData.array = [...DS.array.initialState];
+                animationData.singly = [...DS.singly.initialState];
+                animationData.doubly = [...DS.doubly.initialState];
+                animationData.circular = [...DS.circular.initialState];
+                animationData.stack = [...DS.stack.initialState];
+                animationData.queue = [...DS.queue.initialState];
+                renderConcept();
+            }
+
+            function traverseDS() {
+                stopAnimation();
+                resetHighlights();
+                const data = animationData[currentDS];
+                if (data.length === 0) return;
+                let idx = 0;
+                function step() {
+                    highlightIndex = idx;
+                    renderConcept();
+                    idx++;
+                    if (idx < data.length) {
+                        animTimer = setTimeout(step, 650);
+                    } else {
+                        animTimer = setTimeout(() => {
+                            highlightIndex = -1;
+                            renderConcept();
+                            animTimer = null;
+                        }, 650);
+                    }
+                }
+                step();
+            }
+
+            function pushStack() {
+                stopAnimation();
+                resetHighlights();
+                const newVal = Math.floor(Math.random() * 90) + 10;
+                animationData.stack.push(newVal);
+                highlightTop = true;
+                renderConcept();
+                animTimer = setTimeout(() => {
+                    highlightTop = false;
+                    renderConcept();
+                    animTimer = null;
+                }, 600);
+            }
+
+            function popStack() {
+                stopAnimation();
+                resetHighlights();
+                if (animationData.stack.length === 0) return;
+                animationData.stack.pop();
+                highlightTop = true;
+                renderConcept();
+                animTimer = setTimeout(() => {
+                    highlightTop = false;
+                    renderConcept();
+                    animTimer = null;
+                }, 600);
+            }
+
+            function peekStack() {
+                stopAnimation();
+                resetHighlights();
+                if (animationData.stack.length === 0) return;
+                highlightTop = true;
+                renderConcept();
+                animTimer = setTimeout(() => {
+                    highlightTop = false;
+                    renderConcept();
+                    animTimer = null;
+                }, 1200);
+            }
+
+            function enqueueQueue() {
+                stopAnimation();
+                resetHighlights();
+                const newVal = Math.floor(Math.random() * 90) + 10;
+                animationData.queue.push(newVal);
+                renderConcept();
+            }
+
+            function dequeueQueue() {
+                stopAnimation();
+                resetHighlights();
+                if (animationData.queue.length === 0) return;
+                animationData.queue.shift();
+                highlightFront = true;
+                renderConcept();
+                animTimer = setTimeout(() => {
+                    highlightFront = false;
+                    renderConcept();
+                    animTimer = null;
+                }, 600);
+            }
+
+            function peekQueue() {
+                stopAnimation();
+                resetHighlights();
+                if (animationData.queue.length === 0) return;
+                highlightFront = true;
+                renderConcept();
+                animTimer = setTimeout(() => {
+                    highlightFront = false;
+                    renderConcept();
+                    animTimer = null;
+                }, 1200);
+            }
+
+            // ============================================================
+            // SWITCH
+            // ============================================================
+            function switchDS(dsKey) {
+                stopAnimation();
+                stopCodeAnimation();
+                resetHighlights();
+                currentDS = dsKey;
+                currentScenario = 0;
+                dsButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.ds === dsKey);
+                });
+                renderConcept();
+            }
+
+            // ============================================================
+            // INIT
+            // ============================================================
+            function init() {
+                dsButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => switchDS(e.currentTarget.dataset.ds));
+                });
+                renderConcept();
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
